@@ -1,8 +1,8 @@
 from zipfile import ZipFile
 from epicpath import EPath
 import tensorflow as tf
-import platform
-import os
+import shutil
+
 
 
 def get_data():
@@ -10,6 +10,18 @@ def get_data():
     Construct the data files
     :return: 2 List<EP>: files of content and style
     """
+
+    cp = EPath('content')
+    sp = EPath('style')
+    if cp.exists() and sp.exists():
+        cp_list = cp.listdir()
+        sp_list = sp.listdir()
+        if len(cp_list) > 0 and len(sp_list) > 0:
+            # Data is already there
+            return cp_list, sp_list
+        else:
+            cp.rmdir()
+            sp.rmdir()
     EPath('content').mkdir()
     EPath('style').mkdir()
     if EPath('content.zip').exists() and EPath('style.zip').exists():
@@ -22,23 +34,16 @@ def get_data():
         style_path_list = EPath('style').listdir(concat=True)
     else:
         # no image provided
-        content_path_list = tf.keras.utils.get_file(
+        cp = content_path_list = tf.keras.utils.get_file(
             'YellowLabradorLooking_new.jpg',
             'https://storage.googleapis.com/download.tensorflow.org/example_images/YellowLabradorLooking_new.jpg'
         )
-        style_path_list = tf.keras.utils.get_file(
+        sp = style_path_list = tf.keras.utils.get_file(
             'kandinsky5.jpg',
             'https://storage.googleapis.com/download.tensorflow.org/example_images/Vassily_Kandinsky%2C_1913_-_Composition_7.jpg'
         )
-        if platform.system() == 'Windows':
-            # My pc
-            # TODO: find where is goes
-            os.rename('/root/.keras/datasets/YellowLabradorLooking_new.jpg', 'content/YellowLabradorLooking_new.jpg')
-            os.rename('/root/.keras/datasets/kandinsky5.jpg', 'style/kandinsky5.jpg')
-        else:
-            # On colab
-            os.rename('/root/.keras/datasets/YellowLabradorLooking_new.jpg', 'content/YellowLabradorLooking_new.jpg')
-            os.rename('/root/.keras/datasets/kandinsky5.jpg', 'style/kandinsky5.jpg')
+        shutil.move(cp, 'content/YellowLabradorLooking_new.jpg')
+        shutil.move(sp, 'style/kandinsky5.jpg')
     return content_path_list, style_path_list
 
 

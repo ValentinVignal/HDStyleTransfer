@@ -1,14 +1,16 @@
 import tensorflow as tf
 from . import model
+from . import parameters as p
 
 
 class StyleContentModel(tf.keras.models.Model):
-    def __init__(self, style_layers, content_layers):
+    def __init__(self, style_layers=p.style_layers, content_layers=p.content_layers):
         super(StyleContentModel, self).__init__()
         self.vgg = model.vgg_layers(style_layers + content_layers)
         self.style_layers = style_layers
         self.content_layers = content_layers
         self.num_style_layers = len(style_layers)
+        self.num_content_layers = len(content_layers)
         self.vgg.trainable = False
 
     def call(self, inputs):

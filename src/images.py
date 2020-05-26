@@ -4,6 +4,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 from . import global_variables as gv
+from .ImageCouple import ImageCouple
 
 
 def tensor_to_image(tensor):
@@ -53,12 +54,17 @@ def imshow(image, title=None):
 
 def load_content_style_img(content_path, style_path, plot_it=False):
     content_image = load_img(content_path, max_dim=gv.img_size_hd)
-    gv.real_shape_hd_content = content_image.shape[1:3]
-    gv.real_shape_nn_content = (
-        int(content_image.shape[1] / gv.ratio_size), int(content_image.shape[2] / gv.ratio_size))
+    # gv.real_shape_hd_content = content_image.shape[1:3]
+    # gv.real_shape_nn_content = (
+    #     int(content_image.shape[1] / gv.ratio_size), int(content_image.shape[2] / gv.ratio_size))
     style_image = load_img(style_path, max_dim=gv.img_size_hd)
-    gv.real_shape_hd_style = style_image.shape[1:3]
-    gv.real_shape_nn_style = (content_image.shape[1] // gv.ratio_size, content_image.shape[2] // gv.ratio_size)
+    # gv.real_shape_hd_style = style_image.shape[1:3]
+    # gv.real_shape_nn_style = (content_image.shape[1] // gv.ratio_size, content_image.shape[2] // gv.ratio_size)
+
+    content_style_images = ImageCouple(
+        content_image=content_image,
+        style_image=style_image
+    )
 
     if plot_it:
         plt.subplot(1, 2, 1)
@@ -66,4 +72,5 @@ def load_content_style_img(content_path, style_path, plot_it=False):
 
         plt.subplot(1, 2, 2)
         imshow(style_image, 'Style Image')
-    return content_image, style_image
+    # return content_image, style_image
+    return content_style_images

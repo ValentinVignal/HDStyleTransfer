@@ -3,21 +3,27 @@ import random
 import tensorflow as tf
 from epicpath import EPath
 import gc
+import loadbar
 
 from . import global_variables as gv
 from . import images
+from . import parameters as p
 
 
-def get_ij(i, j, o_i=0, o_j=0, ratio_size=gv.ratio_size, img_type='content'):
+def get_ij(i, j, o_i=0, o_j=0, ratio_size=gv.ratio_size, img_type='content', image_couple=None):
     """
     return i_start, i_stop, j_start, j_stop
     """
     if img_type == 'content':
-        shape_hd = gv.real_shape_hd_content
-        shape_nn = gv.real_shape_nn_content
+        # shape_hd = gv.real_shape_hd_content
+        # shape_nn = gv.real_shape_nn_content
+        shape_hd = image_couple.content_hd_shape
+        shape_nn = image_couple.content_nn_shape
     elif img_type == 'style':
-        shape_hd = gv.real_shape_hd_style
-        shape_nn = gv.real_shape_nn_style
+        # shape_hd = gv.real_shape_hd_style
+        # shape_nn = gv.real_shape_nn_style
+        shape_hd = image_couple.style_hd_shape
+        shape_nn = image_couple.style_nn_shape
     i_offset = (o_i * shape_hd[0]) // (gv.nb_offsets * ratio_size)
     j_offset = (o_j * shape_hd[1]) // (gv.nb_offsets * ratio_size)
 
@@ -59,11 +65,11 @@ def style_content_loss(outputs, content_targets, style_targets):
     content_outputs = outputs['content']
     style_loss = tf.add_n([tf.reduce_mean((style_outputs[name] - style_targets[name]) ** 2)
                            for name in style_outputs.keys()])
-    style_loss *= gv.style_weight / num_style_layers
+    style_loss *= p.style_weight / p.num_style_layers
 
     content_loss = tf.add_n([tf.reduce_mean((content_outputs[name] - content_targets[name]) ** 2)
                              for name in content_outputs.keys()])
-    content_loss *= gv.content_weight / num_content_layers
+    content_loss *= p.content_weight / p.num_content_layers
     loss = style_loss + content_loss
     return loss
 
@@ -74,7 +80,7 @@ def total_variation_loss(image, content_targets):
 
 
 # TODO: maybe create a function which creates this function
-def create_train_step():
+def create_train_step(extractor, optimizers, image_couple):
     @tf.function
     def train_step(image, content_image, style_image):
         for r in range(1, gv.ratio_size + 1):
@@ -94,14 +100,16 @@ def create_train_step():
                                     i_start, i_stop, j_start, j_stop = get_ij(i, j, o_i, o_j, ratio_size=r,
                                                                               img_type='content')
                                     img = image[:, i_start:i_stop, j_start:j_stop]
-                                    img = tf.image.resize(img, gv.real_shape_nn_content)
+                                    # img = tf.image.resize(img, gv.real_shape_nn_content)
+                                    img = tf.image.resize(img, image_couple.content_nn_shape)
                                     cont = content_image[:, i_start:i_stop, j_start:j_stop]
-                                    cont = tf.image.resize(cont, gv.real_shape_nn_content)
+                                    # cont = tf.image.resize(cont, gv.real_shape_nn_content)
+                                    cont = tf.image.resize(cont, image_couple.style_nn_shape)
 
                                     outputs = extractor(img)
                                     content_targets = extractor(cont)['content']
 
-                                    if gv.style_division:
+                                    if p.style_division:
                                         i_start_style, i_stop_style, j_start_style, j_stop_style = get_ij(i, j, o_i,
                                                                                                           o_j,
                                                                                                           ratio_size=r,
@@ -109,12 +117,13 @@ def create_train_step():
                                         style = style_image[:, i_start_style:i_stop_style, j_start_style:j_stop_style]
                                     else:
                                         style = style_image
-                                    style = tf.image.resize(style, gv.real_shape_nn_style)
+                                    # style = tf.image.resize(style, gv.real_shape_nn_style)
+                                    style = tf.image.resize(style, image_couple.style_nn_shape)
                                     style_targets = extractor(style)['style']
 
                                     loss += style_content_loss(outputs, content_targets, style_targets)
-                                    loss += gv.total_variation_weight * tf.image.total_variation(img)
-                        loss *= gv.ratio_weight ** (1 - r)
+                                    loss += p.total_variation_weight * tf.image.total_variation(img)
+                        loss *= p.ratio_weight ** (1 - r)
 
                     if has_loss:
                         grad = tape.gradient(
@@ -127,28 +136,38 @@ def create_train_step():
     return train_step
 
 
-def style_transfert(content_path, style_path):
-    content_image, style_image = images.load_content_style_img(content_path.as_posix(), style_path.as_posix(), plot_it=True)
-    image = tf.Variable(content_image)
+def style_transfert(content_path, style_path, extractor, optimizers):
+    # content_image, style_image = images.load_content_style_img(content_path.as_posix(), style_path.as_posix(), plot_it=True)
+    image_couple = images.load_content_style_img(content_path.as_posix(), style_path.as_posix(), plot_it=True)
+    image = tf.Variable(image_couple.content_image)
 
     results_folder = EPath('results') / content_path.stem / style_path.stem
     results_folder.mkdir(exist_ok=True, parents=True)
-    train_step = create_train_step()
+    train_step = create_train_step(
+        extractor=extractor,
+        optimizers=optimizers,
+        image_couple=image_couple
+    )
 
-    for n in range(gv.epochs):
-        pb = ProgressBar(max_iteration=(n + 1) * gv.steps_per_epoch, title=f'Epoch {n + 1}/{gv.epochs}')
-        for m in range((n + 1) * gv.steps_per_epoch):
+    for n in range(p.epochs):
+        # pb = ProgressBar(max_iteration=(n + 1) * p.steps_per_epoch, title=f'Epoch {n + 1}/{p.epochs}')
+        print(f'Epoch {n + 1}/{p.epochs}')
+        bar = loadbar.LoadBar(max=(n + 1) * p.steps_per_epoch)
+        bar.start()
+        for m in range((n + 1) * p.steps_per_epoch):
             train_step(
                 image=image,
-                content_image=content_image,
-                style_image=style_image
+                content_image=image_couple.content_image,
+                style_image=image_couple.style_image
             )
-            pb.update()
-        del pb
-        display.clear_output(wait=True)
-        display.display(images.tensor_to_image(image).resize((gv.real_shape_nn_content[1], gv.real_shape_nn_content[0])))
-        file_name = results_folder / f'step_{(n + 1) * gv.steps_per_epoch}.png'
+            bar.update()
+        bar.end()
+        # display.clear_output(wait=True)
+        # display.display(images.tensor_to_image(image).resize((gv.real_shape_nn_content[1], gv.real_shape_nn_content[0])))
+        file_name = results_folder / f'step_{(n + 1) * p.steps_per_epoch}.png'
         image.tensor_to_image(image).save(file_name)
-        print(f"Epoch: {n + 1}/{gv.epochs}")
-    del content_image, style_image, image, train_step
+        print(f"Epoch: {n + 1}/{p.epochs}")
+    del image_couple, image, train_step
     gc.collect()
+
+
