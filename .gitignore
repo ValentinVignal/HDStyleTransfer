@@ -127,4 +127,11 @@ dmypy.json
 # Pycharm
 .idea
 
+# project
+content/
+content.zip
+style/
+style.zip
+results/
+
 
