@@ -84,21 +84,30 @@ def create_train_step(extractor, optimizers, image_couple):
     @tf.function
     def train_step(image, content_image, style_image):
         for r in range(1, gv.ratio_size + 1):
+            # ! For all size of sub-images
             offsets_i = list(range(gv.nb_offsets))
             random.shuffle(offsets_i)
             for o_i in offsets_i:
+                # for all the offsets on first axis
                 offsets_j = list(range(gv.nb_offsets))
                 random.shuffle(offsets_j)
                 for o_j in offsets_j:
+                    # for all offsets on second axis
                     loss = tf.zeros(shape=(1,))
                     has_loss = False
                     with tf.GradientTape() as tape:
                         for i in range(r):
+                            # For all the sub-images on first axis
                             for j in range(r):
+                                # For all the sub-images on the second axis
                                 if (o_i == 0 or i < r - 1) and (o_j == 0 or j < r - 1):
                                     has_loss = True
-                                    i_start, i_stop, j_start, j_stop = get_ij(i, j, o_i, o_j, ratio_size=r,
-                                                                              img_type='content')
+                                    i_start, i_stop, j_start, j_stop = get_ij(
+                                        i, j, o_i, o_j,
+                                        ratio_size=r,
+                                        img_type='content',
+                                        image_couple=image_couple
+                                    )
                                     img = image[:, i_start:i_stop, j_start:j_stop]
                                     # img = tf.image.resize(img, gv.real_shape_nn_content)
                                     img = tf.image.resize(img, image_couple.content_nn_shape)
@@ -110,10 +119,12 @@ def create_train_step(extractor, optimizers, image_couple):
                                     content_targets = extractor(cont)['content']
 
                                     if p.style_division:
-                                        i_start_style, i_stop_style, j_start_style, j_stop_style = get_ij(i, j, o_i,
-                                                                                                          o_j,
-                                                                                                          ratio_size=r,
-                                                                                                          img_type='style')
+                                        i_start_style, i_stop_style, j_start_style, j_stop_style = get_ij(
+                                            i, j, o_i, o_j,
+                                            ratio_size=r,
+                                            img_type='style',
+                                            image_couple=image_couple
+                                        )
                                         style = style_image[:, i_start_style:i_stop_style, j_start_style:j_stop_style]
                                     else:
                                         style = style_image
@@ -130,7 +141,7 @@ def create_train_step(extractor, optimizers, image_couple):
                             loss,
                             image
                         )
-                        optimizers[r - 1, o_i, o_j].apply_gradients([(grad, image)])
+                        optimizers.optimizers[r - 1, o_i, o_j].apply_gradients([(grad, image)])
                         image.assign(clip_0_1(image))
 
     return train_step
@@ -165,9 +176,7 @@ def style_transfert(content_path, style_path, extractor, optimizers):
         # display.clear_output(wait=True)
         # display.display(images.tensor_to_image(image).resize((gv.real_shape_nn_content[1], gv.real_shape_nn_content[0])))
         file_name = results_folder / f'step_{(n + 1) * p.steps_per_epoch}.png'
-        image.tensor_to_image(image).save(file_name)
+        images.tensor_to_image(image).save(file_name.str)
         print(f"Epoch: {n + 1}/{p.epochs}")
     del image_couple, image, train_step
     gc.collect()
-
-

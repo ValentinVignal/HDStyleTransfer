@@ -4,7 +4,6 @@ import tensorflow as tf
 import shutil
 
 
-
 def get_data():
     """
     Construct the data files
@@ -14,8 +13,8 @@ def get_data():
     cp = EPath('content')
     sp = EPath('style')
     if cp.exists() and sp.exists():
-        cp_list = cp.listdir()
-        sp_list = sp.listdir()
+        cp_list = cp.listdir(concat=True)
+        sp_list = sp.listdir(concat=True)
         if len(cp_list) > 0 and len(sp_list) > 0:
             # Data is already there
             return cp_list, sp_list
@@ -30,20 +29,20 @@ def get_data():
             zip_ref.extractall('./')
         with ZipFile('style.zip', 'r') as zip_ref:
             zip_ref.extractall('./')
-        content_path_list = EPath('content').listdir(concat=True)
-        style_path_list = EPath('style').listdir(concat=True)
     else:
         # no image provided
-        cp = content_path_list = tf.keras.utils.get_file(
+        cp = tf.keras.utils.get_file(
             'YellowLabradorLooking_new.jpg',
             'https://storage.googleapis.com/download.tensorflow.org/example_images/YellowLabradorLooking_new.jpg'
         )
-        sp = style_path_list = tf.keras.utils.get_file(
+        sp = tf.keras.utils.get_file(
             'kandinsky5.jpg',
             'https://storage.googleapis.com/download.tensorflow.org/example_images/Vassily_Kandinsky%2C_1913_-_Composition_7.jpg'
         )
         shutil.move(cp, 'content/YellowLabradorLooking_new.jpg')
         shutil.move(sp, 'style/kandinsky5.jpg')
+    content_path_list = EPath('content').listdir(concat=True)
+    style_path_list = EPath('style').listdir(concat=True)
     return content_path_list, style_path_list
 
 

@@ -6,8 +6,8 @@ nb_offsets = 4           # number of offsets to do overlapping
 
 if platform.system() == 'Windows':
     # on my pc
-    img_size_nn = 128
-    img_size_hd = 512
+    img_size_nn = 64
+    img_size_hd = 128
     nb_offsets = 2
 
 

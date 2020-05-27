@@ -1,6 +1,6 @@
 from epicpath import EPath
 
 for path in ['content', 'style', 'results']:
-    EPath(path).rmdir()
+    EPath(path).rm()
 
 

@@ -1,3 +1,5 @@
+import platform
+
 # Parameters
 style_weight = 1e-2     # Importance of style
 content_weight = 1e5        # Importance of content
@@ -5,7 +7,8 @@ total_variation_weight = 1e3        # How much to reduce high freauencies
 
 ratio_weight = 1e2      # Reduction of smaller sub-images
 
-epochs = 1e2
+
+epochs = 5
 steps_per_epoch = 5
 lr = 1e-2
 
@@ -24,3 +27,8 @@ style_layers = [
 ]
 num_content_layers = len(content_layers)
 num_style_layers = len(style_layers)
+
+if platform.system() == 'Windows':
+    # on my pc
+    epochs = 2
+    steps_per_epoch = 2
