@@ -4,7 +4,7 @@ import tensorflow as tf
 import shutil
 
 
-def get_data():
+def extract_data():
     """
     Construct the data files
     :return: 2 List<EP>: files of content and style
@@ -13,23 +13,32 @@ def get_data():
     cp = EPath('content')
     sp = EPath('style')
     if cp.exists() and sp.exists():
+        # Check if I have to reconstruct it or not
         cp_list = cp.listdir(concat=True)
         sp_list = sp.listdir(concat=True)
         if len(cp_list) > 0 and len(sp_list) > 0:
             # Data is already there
             return cp_list, sp_list
         else:
+            # Remove everything to do it again
             cp.rmdir()
             sp.rmdir()
+
     EPath('content').mkdir()
     EPath('style').mkdir()
-    if EPath('content.zip').exists() and EPath('style.zip').exists():
-        # the zip files are provided
-        with ZipFile('content.zip', 'r') as zip_ref:
-            zip_ref.extractall('./')
-        with ZipFile('style.zip', 'r') as zip_ref:
-            zip_ref.extractall('./')
-    else:
+    possible_parents = ['.', '..']      # The working folder (my computer) or the parent folder (colab)
+    data_found = False
+    for possible_parent in possible_parents:
+        cp_zip = EPath(possible_parent, 'content.zip')
+        sp_zip = EPath(possible_parent, 'style.zip')
+        if cp_zip.exists() and sp_zip.exists() and not data_found:
+            data_found = True
+            # the zip files are provided in the project folder
+            with ZipFile(cp_zip, 'r') as zip_ref:
+                zip_ref.extractall('./')
+            with ZipFile(sp_zip, 'r') as zip_ref:
+                zip_ref.extractall('./')
+    if not data_found:
         # no image provided
         cp = tf.keras.utils.get_file(
             'YellowLabradorLooking_new.jpg',
@@ -44,6 +53,23 @@ def get_data():
     content_path_list = EPath('content').listdir(concat=True)
     style_path_list = EPath('style').listdir(concat=True)
     return content_path_list, style_path_list
+
+
+def get_data():
+    """
+    Construct the data files
+    :return: 2 List<EP>: files of content and style
+    """
+
+    cp = EPath('content')
+    sp = EPath('style')
+    if cp.exists() and sp.exists():
+        cp_list = cp.listdir(concat=True)
+        sp_list = sp.listdir(concat=True)
+        if len(cp_list) > 0 and len(sp_list) > 0:
+            # Data is already there
+            return cp_list, sp_list
+    return extract_data()
 
 
 def get_next_files(content_path_list, style_path_list):
