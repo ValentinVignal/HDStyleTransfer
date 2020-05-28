@@ -1,6 +1,7 @@
-numpy==1.18.4
-tensorflow==2.2.0
 matplotlib==3.2.1
-load_bar==0.0.3
+numpy==1.18.4
 epic_path==0.1.0
+load_bar==0.0.4
+tensorflow==2.2.0
+ipython==7.14.0
 Pillow==7.1.2

@@ -160,14 +160,14 @@ def style_transfert(content_path, style_path, extractor, optimizers):
         optimizers=optimizers,
         image_couple=image_couple
     )
-    bar_epoch = loadbar.ColorBar(color=loadbar.Colors.cyan, max=p.epochs)
+    bar_epoch = loadbar.ColorBar(color=loadbar.Colors.cyan, max=p.epochs, title='Epoch')
     bar_epoch.start()
     for n in range(p.epochs):
         # pb = ProgressBar(max_iteration=(n + 1) * p.steps_per_epoch, title=f'Epoch {n + 1}/{p.epochs}')
         print(f'Epoch {n + 1}/{p.epochs}')
         bar_epoch.update(step=n, end='\n')
 
-        bar_step = loadbar.LoadBar(max=(n + 1) * p.steps_per_epoch)
+        bar_step = loadbar.LoadBar(max=(n + 1) * p.steps_per_epoch, title='Step')
         bar_step.start()
         for m in range((n + 1) * p.steps_per_epoch):
             train_step(
@@ -177,8 +177,6 @@ def style_transfert(content_path, style_path, extractor, optimizers):
             )
             bar_step.update()
         bar_step.end()
-        # plot.clear_output(wait=True)
-        # plot.display(images.tensor_to_image(image).resize(tuple(s // 2 for s in image_couple.content_nn_shape)))
         plot.display(image)
         file_name = results_folder / f'step_{(n + 1) * (n + 2) * p.steps_per_epoch // 2}.png'
         images.tensor_to_image(image).save(file_name.str)
