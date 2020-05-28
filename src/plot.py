@@ -2,6 +2,8 @@ import platform
 import matplotlib.pyplot as plt
 import IPython.display as idisplay
 
+from . import images
+
 
 def clear_output(wait=True):
     if platform.system() == 'Windows':
@@ -12,18 +14,18 @@ def clear_output(wait=True):
 
 
 def display(objs):
-    if platform.system() == 'Windows':
+    # if platform.system() == 'Windows':
+    if True:
+        plt.close('all')
         plt.ion()
         plt.show()
-        plt.imshow(objs)
+        plt.subplot(1, 1, 1)
+        images.imshow(objs)
+
         # plt.show(block=False)
         plt.draw()
         plt.pause(0.001)
     else:
-        idisplay.display_png(
-            objs,
-            width=objs.width,
-            height=objs.height
-        )
+        idisplay.display(objs)
 
 
