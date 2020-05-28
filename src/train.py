@@ -164,7 +164,6 @@ def style_transfert(content_path, style_path, extractor, optimizers):
     bar_epoch.start()
     for n in range(p.epochs):
         # pb = ProgressBar(max_iteration=(n + 1) * p.steps_per_epoch, title=f'Epoch {n + 1}/{p.epochs}')
-        print(f'Epoch {n + 1}/{p.epochs}')
         bar_epoch.update(step=n, end='\n')
 
         bar_step = loadbar.LoadBar(max=(n + 1) * p.steps_per_epoch, title='Step')
