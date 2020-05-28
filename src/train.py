@@ -178,7 +178,7 @@ def style_transfert(content_path, style_path, extractor, optimizers):
             bar_step.update()
         bar_step.end()
         # plot.clear_output(wait=True)
-        plot.display(images.tensor_to_image(image).resize(type(s // 2 for s in image_couple.content_nn_shape)))
+        plot.display(images.tensor_to_image(image).resize(tuple(s // 2 for s in image_couple.content_nn_shape)))
         file_name = results_folder / f'step_{(n + 1) * (n + 2) * p.steps_per_epoch // 2}.png'
         images.tensor_to_image(image).save(file_name.str)
     bar_epoch.end()
