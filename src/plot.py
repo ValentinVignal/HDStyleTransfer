@@ -1,12 +1,12 @@
-import platform
 import matplotlib.pyplot as plt
 import IPython.display as idisplay
 
 from . import images
+from . import global_variables as gv
 
 
 def clear_output(wait=True):
-    if platform.system() == 'Windows':
+    if not gv.colab:
         plt.close('all')
         pass
     else:
@@ -14,7 +14,7 @@ def clear_output(wait=True):
 
 
 def display(objs):
-    # if platform.system() == 'Windows':
+    # if not gv.colab:
     if True:
         plt.close('all')
         plt.ion()

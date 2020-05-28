@@ -1,10 +1,12 @@
-import platform
+import sys
 
 img_size_nn = 512       # Max size of the input of the nn
 img_size_hd = 1024      # TODO: change it to 4096
 nb_offsets = 4           # number of offsets to do overlapping
 
-if platform.system() == 'Windows':
+colab = 'google.colab' in sys.modules
+
+if not colab:
     # on my pc
     img_size_nn = 64
     img_size_hd = 128
