@@ -4,8 +4,8 @@ import IPython.display as idisplay
 
 
 def clear_output(wait=True):
-    # if platform.system() == 'Windows':
-    if True:
+    if platform.system() == 'Windows':
+    # if True:
         plt.close('all')
         pass
     else:
@@ -13,8 +13,8 @@ def clear_output(wait=True):
 
 
 def display(objs):
-    # if platform.system() == 'Windows':
-    if True:
+    if platform.system() == 'Windows':
+    # if True:
         plt.ion()
         plt.show()
         plt.imshow(objs)
