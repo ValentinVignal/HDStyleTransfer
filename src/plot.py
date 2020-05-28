@@ -20,6 +20,6 @@ def display(objs):
         plt.draw()
         plt.pause(0.001)
     else:
-        idisplay.display(objs, width=objs.shape[0], height=objs.shape[1])
+        idisplay.display(objs, width=objs.width, height=objs.height)
 
 
