@@ -5,7 +5,6 @@ import IPython.display as idisplay
 
 def clear_output(wait=True):
     if platform.system() == 'Windows':
-    # if True:
         plt.close('all')
         pass
     else:
@@ -14,7 +13,6 @@ def clear_output(wait=True):
 
 def display(objs):
     if platform.system() == 'Windows':
-    # if True:
         plt.ion()
         plt.show()
         plt.imshow(objs)
@@ -22,6 +20,6 @@ def display(objs):
         plt.draw()
         plt.pause(0.001)
     else:
-        idisplay.display(objs)
+        idisplay.display(objs, width=objs.shape[0], height=objs.shape[1])
 
 
