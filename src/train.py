@@ -176,7 +176,7 @@ def style_transfert(content_path, style_path, extractor, optimizers):
         bar.end()
         plot.clear_output(wait=True)
         plot.display(images.tensor_to_image(image).resize(image_couple.content_hd_shape))
-        file_name = results_folder / f'step_{(n + 1) * p.steps_per_epoch}.png'
+        file_name = results_folder / f'step_{(n + 1) * (n + 2) * p.steps_per_epoch // 2}.png'
         images.tensor_to_image(image).save(file_name.str)
         print(f"Epoch: {n + 1}/{p.epochs}")
     del image_couple, image, train_step
