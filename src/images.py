@@ -67,10 +67,15 @@ def load_content_style_img(content_path, style_path, plot_it=False):
     )
 
     if plot_it:
+        plt.close('all')
+        plt.ion()
+        plt.show()
         plt.subplot(1, 2, 1)
         imshow(content_image, 'Content Image')
 
         plt.subplot(1, 2, 2)
         imshow(style_image, 'Style Image')
+        plt.draw()
+        plt.pause(0.001)
     # return content_image, style_image
     return content_style_images

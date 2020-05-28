@@ -7,5 +7,6 @@ from . import train
 from .ImageCouple import ImageCouple
 from . import parameters as p
 from .Optimizers import Optimizers
+from . import plot
 
 

@@ -8,6 +8,7 @@ import loadbar
 from . import global_variables as gv
 from . import images
 from . import parameters as p
+from . import plot
 
 
 def get_ij(i, j, o_i=0, o_j=0, ratio_size=gv.ratio_size, img_type='content', image_couple=None):
@@ -173,8 +174,8 @@ def style_transfert(content_path, style_path, extractor, optimizers):
             )
             bar.update()
         bar.end()
-        # display.clear_output(wait=True)
-        # display.display(images.tensor_to_image(image).resize((gv.real_shape_nn_content[1], gv.real_shape_nn_content[0])))
+        plot.clear_output(wait=True)
+        plot.display(images.tensor_to_image(image).resize(image_couple.content_hd_shape))
         file_name = results_folder / f'step_{(n + 1) * p.steps_per_epoch}.png'
         images.tensor_to_image(image).save(file_name.str)
         print(f"Epoch: {n + 1}/{p.epochs}")
