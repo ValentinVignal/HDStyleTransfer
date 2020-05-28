@@ -20,12 +20,10 @@ def display(objs):
         plt.draw()
         plt.pause(0.001)
     else:
-        idisplay.display(
+        idisplay.display_png(
             objs,
-            metadata={
-                'width': objs.width,
-                'height': objs.height
-            }
+            width=objs.width,
+            height=objs.height
         )
 
 
