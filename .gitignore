@@ -133,5 +133,7 @@ content.zip
 style/
 style.zip
 results/
+global_variables.json
+parameters.json
 
 

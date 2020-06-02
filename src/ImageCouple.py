@@ -1,4 +1,4 @@
-from . import global_variables as gv
+from . import variables as var
 
 
 class ImageCouple:
@@ -17,7 +17,7 @@ class ImageCouple:
 
     @property
     def content_nn_shape(self):
-        return tuple(s // gv.ratio_size for s in self.content_image.shape[1: 3])
+        return tuple(s // var.gv.ratio_size for s in self.content_image.shape[1: 3])
 
     @property
     def style_hd_shape(self):

@@ -3,7 +3,7 @@ import PIL
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-from . import global_variables as gv
+from . import variables as var
 from .ImageCouple import ImageCouple
 
 
@@ -19,7 +19,7 @@ def tensor_to_image(tensor):
     return PIL.Image.fromarray(tensor)
 
 
-def load_img(path_to_img, max_dim=gv.img_size_nn):
+def load_img(path_to_img, max_dim=var.gv.img_size_nn):
     """
     function to load an image and limit its maximum dimension to 512 pixels.
     arg: path of the image
@@ -53,11 +53,11 @@ def imshow(image, title=None):
 
 
 def load_content_style_img(content_path, style_path, plot_it=False):
-    content_image = load_img(content_path, max_dim=gv.img_size_hd)
+    content_image = load_img(content_path, max_dim=var.gv.img_size_hd)
     # gv.real_shape_hd_content = content_image.shape[1:3]
     # gv.real_shape_nn_content = (
     #     int(content_image.shape[1] / gv.ratio_size), int(content_image.shape[2] / gv.ratio_size))
-    style_image = load_img(style_path, max_dim=gv.img_size_hd)
+    style_image = load_img(style_path, max_dim=var.gv.img_size_hd)
     # gv.real_shape_hd_style = style_image.shape[1:3]
     # gv.real_shape_nn_style = (content_image.shape[1] // gv.ratio_size, content_image.shape[2] // gv.ratio_size)
 
