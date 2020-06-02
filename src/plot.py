@@ -2,11 +2,11 @@ import matplotlib.pyplot as plt
 import IPython.display as idisplay
 
 from . import images
-from . import global_variables as gv
+from . import var as var
 
 
 def clear_output(wait=True):
-    if not gv.colab:
+    if not var.gv.colab:
         plt.close('all')
         pass
     else:

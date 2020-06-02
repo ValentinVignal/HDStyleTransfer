@@ -8,8 +8,8 @@ if result_path is not None:
     # image_couple = src.images.load_content_style_img(content_path.as_posix(), style_path.as_posix(), plot_it=True)
 
     extractor = src.StyleContentModel(
-        style_layers=src.p.style_layers,
-        content_layers=src.p.content_layers
+        style_layers=src.var.p.style_layers,
+        content_layers=src.var.p.content_layers
     )
 
     optimizers = src.Optimizers()
