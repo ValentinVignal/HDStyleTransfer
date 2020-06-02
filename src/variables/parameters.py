@@ -7,7 +7,7 @@ from . import utils
 # Parameters
 style_weight = 1e-2     # Importance of style
 content_weight = 1e5        # Importance of content
-total_variation_weight = 1e3        # How much to reduce high freauencies
+total_variation_weight = 1e3        # How much to reduce high frequencies
 
 ratio_weight = 1e2      # Reduction of smaller sub-images
 

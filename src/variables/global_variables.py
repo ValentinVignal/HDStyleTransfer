@@ -4,9 +4,9 @@ import json
 
 from . import utils
 
-img_size_nn = 512       # Max size of the input of the nn
-img_size_hd = 1024      # TODO: change it to 4096
-nb_offsets = 4           # number of offsets to do overlapping
+img_size_nn = 512  # Max size of the input of the nn
+img_size_hd = 1024  # TODO: change it to 4096
+nb_offsets = 4  # number of offsets to do overlapping
 
 colab = 'google.colab' in sys.modules
 
@@ -15,10 +15,6 @@ if not colab:
     img_size_nn = 64
     img_size_hd = 128
     nb_offsets = 2
-
-
-ratio_size = img_size_hd // img_size_nn
-
 
 json_path = EPath('global_variables.json')
 
@@ -30,5 +26,4 @@ if json_path.exists():
         img_size_hd = utils.get_key(data, 'img_size_hd', img_size_hd)
         nb_offsets = utils.get_key(data, 'nb_offsets', nb_offsets)
 
-
-
+ratio_size = img_size_hd // img_size_nn
