@@ -12,7 +12,7 @@ total_variation_weight = 1e3        # How much to reduce high frequencies
 ratio_weight = 1e2      # Reduction of smaller sub-images
 
 
-epochs = 10
+epochs = 5
 steps_per_epoch = 5
 lr = 1e-2
 
@@ -29,6 +29,8 @@ style_layers = [
     'block4_conv1',
     'block5_conv1'
 ]
+
+image_start = ['content']
 
 if platform.system() == 'Windows':
     # on my pc
@@ -51,10 +53,8 @@ if json_path.exists():
         style_division = utils.get_key(data, 'style_division', style_division)
         content_layers = utils.get_key(data, 'content_layers', content_layers)
         style_layers = utils.get_key(data, 'style_layers', style_layers)
-        lr = utils.get_key(data, 'lr', lr)
-        lr = utils.get_key(data, 'lr', lr)
-        lr = utils.get_key(data, 'lr', lr)
-        lr = utils.get_key(data, 'lr', lr)
+        image_start = utils.get_key(data, 'image_start', image_start)
 
 num_content_layers = len(content_layers)
 num_style_layers = len(style_layers)
+num_image_start = len(image_start)

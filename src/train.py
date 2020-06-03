@@ -131,10 +131,9 @@ def create_train_step(extractor, optimizers, image_couple):
     return train_step
 
 
-def style_transfert(content_path, style_path, extractor, optimizers):
-    print('epochs', var.p.epochs, )
+def style_transfert(content_path, style_path, extractor, optimizers, image_start='content'):
     image_couple = images.load_content_style_img(content_path.as_posix(), style_path.as_posix(), plot_it=True)
-    image = tf.Variable(image_couple.content_image)
+    image = image_couple.get_start_image(image_start=image_start)
 
     results_folder = EPath('results') / content_path.stem / style_path.stem
     results_folder.mkdir(exist_ok=True, parents=True)
@@ -160,7 +159,7 @@ def style_transfert(content_path, style_path, extractor, optimizers):
             bar_step.update()
         bar_step.end()
         plot.display(image)
-        file_name = results_folder / f'step_{(n + 1) * (n + 2) * var.p.steps_per_epoch // 2}.png'
+        file_name = results_folder / f'{image_start}_step_{(n + 1) * (n + 2) * var.p.steps_per_epoch // 2}.png'
         images.tensor_to_image(image).save(file_name.str)
     bar_epoch.end()
     del image_couple, image, train_step

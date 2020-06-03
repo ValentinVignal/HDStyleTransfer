@@ -1,3 +1,5 @@
+import tensorflow as tf
+
 from . import variables as var
 
 
@@ -26,3 +28,16 @@ class ImageCouple:
     @property
     def style_nn_shape(self):
         return self.content_nn_shape
+
+    def get_start_image(self, image_start=None):
+        """
+
+        :param image_start:
+        :return:
+        """
+        if image_start is None or image_start == 'content':
+            return tf.Variable(self.content_image)
+        elif image_start == 'style':
+            return tf.Variable(tf.image.resize(self.style_image, self.content_hd_shape))
+        elif image_start == 'grey':
+            return tf.Variable(0.5 * tf.ones(shape=(1, *self.content_hd_shape, 3)))
