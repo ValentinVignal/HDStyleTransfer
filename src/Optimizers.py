@@ -10,7 +10,6 @@ class Optimizers:
         self.init_optimizers()
 
     def init_optimizers(self):
-        print('nb offsets', var.gv.nb_offsets)
         self.optimizers = np.ndarray(
             shape=(var.gv.ratio_size, var.gv.nb_offsets, var.gv.nb_offsets),
             dtype=tf.optimizers.Optimizer
