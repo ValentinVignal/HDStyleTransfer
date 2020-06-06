@@ -16,7 +16,7 @@ if not colab:
     img_size_hd = 128
     nb_offsets = 2
 
-json_path = EPath('global_variables.json')
+json_path = EPath('style_transfert_global_variables.json')
 
 if json_path.exists():
     # If a json file exists, then take the variables

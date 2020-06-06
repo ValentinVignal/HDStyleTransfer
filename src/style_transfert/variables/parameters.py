@@ -37,7 +37,7 @@ if platform.system() == 'Windows':
     epochs = 2
     steps_per_epoch = 2
 
-json_path = EPath('parameters.json')
+json_path = EPath('style_transfert_parameters.json')
 
 if json_path.exists():
     # If a json file exists, then take the variables
