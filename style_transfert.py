@@ -12,7 +12,10 @@ if result_path is not None:
         content_layers=src.st.var.p.content_layers
     )
 
-    optimizers = src.st.Optimizers()
+    optimizers = src.st.Optimizers(
+        shape=(1,),
+        lr=src.st.var.p.lr
+    )
 
     result_path.mkdir()
     src.st.train.style_transfert(
@@ -20,7 +23,9 @@ if result_path is not None:
         style_path=style_path,
         extractor=extractor,
         optimizers=optimizers,
-        image_start=img_start
+        image_start=img_start,
+        epochs=src.st.var.p.epochs,
+        steps_per_epoch=src.st.var.p.epochs
     )
 else:
     print('No result_path left...')

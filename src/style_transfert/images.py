@@ -19,7 +19,7 @@ def tensor_to_image(tensor):
     return PIL.Image.fromarray(tensor)
 
 
-def load_img(path_to_img, max_dim=var.gv.img_size_nn):
+def load_img(path_to_img, size=var.p.img_size, dim_size=var.p.dim_size):
     """
     function to load an image and limit its maximum dimension to 512 pixels.
     arg: path of the image
@@ -30,8 +30,8 @@ def load_img(path_to_img, max_dim=var.gv.img_size_nn):
     img = tf.image.convert_image_dtype(img, tf.float32)  # (h, l 3)
 
     shape = tf.cast(tf.shape(img)[:-1], tf.float32)
-    long_dim = max(shape)
-    scale = max_dim / long_dim
+    dim = max(shape) if dim_size == 'max' else min(shape)
+    scale = size / dim
 
     new_shape = tf.cast(shape * scale, tf.int32)
 
@@ -53,11 +53,11 @@ def imshow(image, title=None):
 
 
 def load_content_style_img(content_path, style_path, plot_it=False):
-    content_image = load_img(content_path, max_dim=var.gv.img_size_hd)
+    content_image = load_img(content_path, size=var.p.img_size)
     # gv.real_shape_hd_content = content_image.shape[1:3]
     # gv.real_shape_nn_content = (
     #     int(content_image.shape[1] / gv.ratio_size), int(content_image.shape[2] / gv.ratio_size))
-    style_image = load_img(style_path, max_dim=var.gv.img_size_hd)
+    style_image = load_img(style_path, size=var.p.img_size)
     # gv.real_shape_hd_style = style_image.shape[1:3]
     # gv.real_shape_nn_style = (content_image.shape[1] // gv.ratio_size, content_image.shape[2] // gv.ratio_size)
 
