@@ -9,7 +9,8 @@ if file_combination is not None:
 
     extractor = src.st.StyleContentModel(
         style_layers=src.st.var.style_layers,
-        content_layers=src.st.var.content_layers
+        content_layers=src.st.var.content_layers,
+        content_gram_layers=src.st.var.content_gram_layers
     )
 
     optimizers = src.st.Optimizers(
