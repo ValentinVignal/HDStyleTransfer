@@ -6,7 +6,7 @@ from . import utils
 
 # Parameters
 img_size = 1024     # Size of one dimension of an image
-dim_size = 'max'    # To choose whether the image size if the biggest or smallest axis
+dim_size = 'min'    # To choose whether the image size if the biggest or smallest axis
 style_weight = 1e-2     # Importance of style
 content_weight = 1e4        # Importance of content
 total_variation_weight = 30        # How much to reduce high frequencies
@@ -26,15 +26,15 @@ style_layers = [
     'block5_conv1'
 ]
 
-image_start = ['content']       # all_contents, style, all_styles, all
+image_start = ['style']       # all_content, style, all_style, all
 
 colab = 'google.colab' in sys.modules
 
 if not colab:
     # on my pc
     img_size = 128
-    epochs = 2
-    steps_per_epoch = 2
+    epochs = 4
+    steps_per_epoch = 5
 
 json_path = EPath('style_transfert_parameters.json')
 

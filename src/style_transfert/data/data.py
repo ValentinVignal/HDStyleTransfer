@@ -4,7 +4,8 @@ import tensorflow as tf
 import shutil
 import functools
 
-from . import variables as var
+from .. import variables as var
+from .FileCombination import FileCombination
 
 
 def extract_data():
@@ -80,24 +81,66 @@ def get_nb_combinaisons():
     return len(content_list) * len(style_list) * var.num_image_start
 
 
-def get_next_files(content_path_list, style_path_list):
+def get_start_path_list(content_path, style_path, image_start=var.image_start, data_path=None):
+    """
+
+    :param content_path:
+    :param style_path:
+    :param image_start:
+    :return: The list of image to start style transfert from
+    """
+    all_content = 'all' in image_start or 'all_content' in image_start
+    all_style = 'all' in image_start or 'all_style' in image_start
+    if (all_content or all_style) and data_path is None:
+        data_path = get_data()      # content_path_list, style_path_list
+    start_path_list = []
+    # Content
+    if all_content:
+        start_path_list.extend(data_path[0])
+    elif 'content' in image_start:
+        # try only the first image
+        start_path_list.append(content_path)
+    if all_style:
+        start_path_list.extend(data_path[1])
+    elif 'style' in image_start:
+        start_path_list.append(style_path)
+    return start_path_list
+
+
+def get_next_files(content_path_list, style_path_list, image_start=var.image_start, data_path=None):
     """
 
     :param content_path_list: List of the content_path
     :param style_path_list: List of the style_path
     :return:
     """
+
     for content_path in content_path_list:
         for style_path in style_path_list:
             result_path = EPath('results', content_path.stem, style_path.stem)
+            start_path_list = get_start_path_list(
+                content_path=content_path,
+                style_path=style_path,
+                image_start=image_start,
+                data_path=data_path
+            )
             if not result_path.exists():
-                return content_path, style_path, result_path, var.image_start[0]
+                return FileCombination(
+                    content_path=content_path,
+                    style_path=style_path,
+                    start_path=start_path_list[0]
+                )
             else:
-                files = result_path.listdir(t='str')
-                for img_start in var.image_start:
-                    if not functools.reduce(lambda x, y: x or y.startswith(img_start), files, False):
-                        return content_path, style_path, result_path, img_start
-    return None, None, None, None
+                files = result_path.listdir(t='str')        # existing files in the result folder
+                for start_path in start_path_list:
+                    file_combination = FileCombination(
+                        content_path=content_path,
+                        style_path=style_path,
+                        start_path=start_path
+                    )
+                    if not functools.reduce(lambda x, y: x or y.startswith(file_combination.result_stem), files, False):
+                        return file_combination
+    return None
 
 
 
