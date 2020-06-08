@@ -102,7 +102,7 @@ def style_transfert(file_combination, extractor, optimizers, epochs=var.epochs,
         style_targets=style_targets
     )
     image = tf.Variable(image_couple.start_image)
-    bar_epoch = loadbar.ColorBar(color=loadbar.Colors.cyan, max=epochs, title='Epoch', show_eta=False)
+    bar_epoch = loadbar.ColorBar(color=loadbar.Colors.cyan, max=epochs, title='Epoch', show_eta=False, show_time=True)
     bar_epoch.start()
     nb_steps = 0
     for n in range(epochs):
