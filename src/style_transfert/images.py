@@ -19,7 +19,7 @@ def tensor_to_image(tensor):
     return PIL.Image.fromarray(tensor)
 
 
-def load_img(path_to_img, size=var.p.img_size, dim_size=var.p.dim_size):
+def load_img(path_to_img, size=var.img_size, dim_size=var.dim_size):
     """
     function to load an image and limit its maximum dimension to 512 pixels.
     arg: path of the image
@@ -53,11 +53,11 @@ def imshow(image, title=None):
 
 
 def load_content_style_img(content_path, style_path, plot_it=False):
-    content_image = load_img(content_path, size=var.p.img_size)
+    content_image = load_img(content_path, size=var.img_size)
     # gv.real_shape_hd_content = content_image.shape[1:3]
     # gv.real_shape_nn_content = (
     #     int(content_image.shape[1] / gv.ratio_size), int(content_image.shape[2] / gv.ratio_size))
-    style_image = load_img(style_path, size=var.p.img_size)
+    style_image = load_img(style_path, size=var.img_size)
     # gv.real_shape_hd_style = style_image.shape[1:3]
     # gv.real_shape_nn_style = (content_image.shape[1] // gv.ratio_size, content_image.shape[2] // gv.ratio_size)
 

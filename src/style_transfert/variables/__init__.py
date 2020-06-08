@@ -1,2 +1,2 @@
-from . import parameters as p
+from .parameters import *
 from . import utils

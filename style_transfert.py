@@ -8,13 +8,13 @@ if result_path is not None:
     # image_couple = src.images.load_content_style_img(content_path.as_posix(), style_path.as_posix(), plot_it=True)
 
     extractor = src.st.StyleContentModel(
-        style_layers=src.st.var.p.style_layers,
-        content_layers=src.st.var.p.content_layers
+        style_layers=src.st.var.style_layers,
+        content_layers=src.st.var.content_layers
     )
 
     optimizers = src.st.Optimizers(
         shape=(1,),
-        lr=src.st.var.p.lr
+        lr=src.st.var.lr
     )
 
     result_path.mkdir()
@@ -24,8 +24,8 @@ if result_path is not None:
         extractor=extractor,
         optimizers=optimizers,
         image_start=img_start,
-        epochs=src.st.var.p.epochs,
-        steps_per_epoch=src.st.var.p.epochs
+        epochs=src.st.var.epochs,
+        steps_per_epoch=src.st.var.epochs
     )
 else:
     print('No result_path left...')

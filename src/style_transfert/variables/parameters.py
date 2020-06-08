@@ -26,7 +26,7 @@ style_layers = [
     'block5_conv1'
 ]
 
-image_start = ['content']
+image_start = ['content']       # all_contents, style, all_styles, all
 
 colab = 'google.colab' in sys.modules
 

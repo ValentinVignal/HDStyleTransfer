@@ -1,5 +1,3 @@
-import numpy as np
-import random
 import tensorflow as tf
 from epicpath import EPath
 import gc
@@ -31,11 +29,11 @@ def style_content_loss(outputs, content_targets, style_targets):
     content_outputs = outputs['content']
     style_loss = tf.add_n([tf.reduce_mean((style_outputs[name] - style_targets[name]) ** 2)
                            for name in style_outputs.keys()])
-    style_loss *= var.p.style_weight / var.p.num_style_layers
+    style_loss *= var.style_weight / var.num_style_layers
 
     content_loss = tf.add_n([tf.reduce_mean((content_outputs[name] - content_targets[name]) ** 2)
                              for name in content_outputs.keys()])
-    content_loss *= var.p.content_weight / var.p.num_content_layers
+    content_loss *= var.content_weight / var.num_content_layers
     loss = style_loss + content_loss
     return loss
 
@@ -66,7 +64,7 @@ def create_train_step(extractor, optimizers, content_targets, style_targets):
                 content_targets=content_targets,
                 style_targets=style_targets
             )
-            loss += var.p.total_variation_weight * tf.image.total_variation(image)
+            loss += var.total_variation_weight * tf.image.total_variation(image)
         grad = tape.gradient(loss, image)
         optimizers.optimizers[0].apply_gradients([(grad, image)])
         image.assign(clip_0_1(image))
@@ -74,8 +72,8 @@ def create_train_step(extractor, optimizers, content_targets, style_targets):
     return train_step
 
 
-def style_transfert(content_path, style_path, extractor, optimizers, image_start='content', epochs=var.p.epochs,
-                    steps_per_epoch=var.p.steps_per_epoch):
+def style_transfert(content_path, style_path, extractor, optimizers, image_start='content', epochs=var.epochs,
+                    steps_per_epoch=var.steps_per_epoch):
     """
 
     :param content_path:
@@ -103,7 +101,7 @@ def style_transfert(content_path, style_path, extractor, optimizers, image_start
     bar_epoch = loadbar.ColorBar(color=loadbar.Colors.cyan, max=epochs, title='Epoch', show_eta=False)
     bar_epoch.start()
     for n in range(epochs):
-        # pb = ProgressBar(max_iteration=(n + 1) * var.psteps_per_epoch, title=f'Epoch {n + 1}/{var.pepochs}')
+        # pb = ProgressBar(max_iteration=(n + 1) * varsteps_per_epoch, title=f'Epoch {n + 1}/{varepochs}')
         bar_epoch.update(step=n, end='\n')
 
         bar_step = loadbar.LoadBar(max=(n + 1) * steps_per_epoch, title='Step')
@@ -114,7 +112,7 @@ def style_transfert(content_path, style_path, extractor, optimizers, image_start
             bar_step.update()
         bar_step.end()
         plot.display(image)
-        file_name = results_folder / f'{image_start}_step_{(n + 1) * (n + 2) * var.p.steps_per_epoch // 2}.png'
+        file_name = results_folder / f'{image_start}_step_{(n + 1) * (n + 2) * var.steps_per_epoch // 2}.png'
         images.tensor_to_image(image).save(file_name.str)
     bar_epoch.end()
     del image_couple, image, train_step

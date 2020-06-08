@@ -77,7 +77,7 @@ def get_data():
 
 def get_nb_combinaisons():
     content_list, style_list = get_data()
-    return len(content_list) * len(style_list) * var.p.num_image_start
+    return len(content_list) * len(style_list) * var.num_image_start
 
 
 def get_next_files(content_path_list, style_path_list):
@@ -91,10 +91,10 @@ def get_next_files(content_path_list, style_path_list):
         for style_path in style_path_list:
             result_path = EPath('results', content_path.stem, style_path.stem)
             if not result_path.exists():
-                return content_path, style_path, result_path, var.p.image_start[0]
+                return content_path, style_path, result_path, var.image_start[0]
             else:
                 files = result_path.listdir(t='str')
-                for img_start in var.p.image_start:
+                for img_start in var.image_start:
                     if not functools.reduce(lambda x, y: x or y.startswith(img_start), files, False):
                         return content_path, style_path, result_path, img_start
     return None, None, None, None
