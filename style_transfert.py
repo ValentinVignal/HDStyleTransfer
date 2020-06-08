@@ -23,7 +23,7 @@ if file_combination is not None:
         extractor=extractor,
         optimizers=optimizers,
         epochs=src.st.var.epochs,
-        steps_per_epoch=src.st.var.epochs
+        steps_per_epoch=src.st.var.steps_per_epoch
     )
 else:
     print('No result_path left...')
