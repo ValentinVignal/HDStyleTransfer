@@ -54,15 +54,15 @@ if json_path.exists():
         dim_size = utils.get_key(data, 'dim_size', dim_size)
         style_weight = utils.get_key(data, 'style_weight', style_weight)
         content_weight = utils.get_key(data, 'content_weight', content_weight)
-        content_gram_weight = utils.get_key(content_gram_weight, 'content_gram_weight', content_gram_weight)
-        content_weight_multiplicator = utils.get_key(content_weight_multiplicator, 'content_weight_multiplicator',
+        content_gram_weight = utils.get_key(data, 'content_gram_weight', content_gram_weight)
+        content_weight_multiplicator = utils.get_key(data, 'content_weight_multiplicator',
                                                      content_weight_multiplicator)
         total_variation_weight = utils.get_key(data, 'total_variation_weight', total_variation_weight)
         epochs = utils.get_key(data, 'epochs', epochs)
         steps_per_epoch = utils.get_key(data, 'steps_per_epoch', steps_per_epoch)
         lr = utils.get_key(data, 'lr', lr)
         content_layers = utils.get_key(data, 'content_layers', content_layers)
-        content_gram_layers = utils.get_key(content_gram_layers, 'content_gram_layers', content_gram_layers)
+        content_gram_layers = utils.get_key(data, 'content_gram_layers', content_gram_layers)
         style_layers = utils.get_key(data, 'style_layers', style_layers)
         image_start = utils.get_key(data, 'image_start', image_start)
 
