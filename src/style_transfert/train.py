@@ -40,7 +40,7 @@ def style_content_loss(outputs, content_targets, style_targets, content_gram_tar
         ]) / var.num_content_gram_layers
 
     if not is_start_content:
-        content_loss *= var.content__weight_multiplicator
+        content_loss *= var.content_weight_multiplicator
     loss = style_loss + content_loss
     return loss
 
