@@ -20,6 +20,10 @@ class FileCombination:
         return EPath(path).parent.stem == 'style'
 
     @property
+    def is_start_content(self):
+        return self.start_path == self.content_path
+
+    @property
     def result_stem(self):
         prefix = ''
         if self.is_content(self.start_path):

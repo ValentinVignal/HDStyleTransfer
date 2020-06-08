@@ -1,5 +1,4 @@
 import tensorflow as tf
-from epicpath import EPath
 import gc
 import loadbar
 
@@ -17,7 +16,7 @@ def clip_0_1(image):
     return tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0)
 
 
-def style_content_loss(outputs, content_targets, style_targets):
+def style_content_loss(outputs, content_targets, style_targets, is_start_content):
     """
 
     :param outputs:
@@ -33,12 +32,15 @@ def style_content_loss(outputs, content_targets, style_targets):
 
     content_loss = tf.add_n([tf.reduce_mean((content_outputs[name] - content_targets[name]) ** 2)
                              for name in content_outputs.keys()])
-    content_loss *= var.content_weight / var.num_content_layers
+    if is_start_content:
+        content_loss *= var.content_weight / var.num_content_layers
+    else:
+        content_loss *= var.content_weight_other_image / var.num_content_layers
     loss = style_loss + content_loss
     return loss
 
 
-def create_train_step(extractor, optimizers, content_targets, style_targets):
+def create_train_step(extractor, optimizers, content_targets, style_targets, is_start_content=True):
     """
     Creates and returns the train step function ton do style transfert iteration
     :param extractor: model used to extract the features layers
@@ -62,7 +64,8 @@ def create_train_step(extractor, optimizers, content_targets, style_targets):
             loss = style_content_loss(
                 outputs=outputs,
                 content_targets=content_targets,
-                style_targets=style_targets
+                style_targets=style_targets,
+                is_start_content=is_start_content
             )
             loss += var.total_variation_weight * tf.image.total_variation(image)
         grad = tape.gradient(loss, image)
@@ -99,7 +102,8 @@ def style_transfert(file_combination, extractor, optimizers, epochs=var.epochs,
         extractor=extractor,
         optimizers=optimizers,
         content_targets=content_targets,
-        style_targets=style_targets
+        style_targets=style_targets,
+        is_start_content=file_combination.is_start_content
     )
     image = tf.Variable(image_couple.start_image)
     bar_epoch = loadbar.ColorBar(color=loadbar.Colors.cyan, max=epochs, title='Epoch', show_eta=False, show_time=True)
