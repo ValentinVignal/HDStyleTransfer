@@ -11,7 +11,7 @@ style_weight = 1e-2     # Importance of style
 content_weight = 1e4        # Importance of content
 total_variation_weight = 30        # How much to reduce high frequencies
 
-epochs = 5
+epochs = 10
 steps_per_epoch = 5
 lr = 2e-2
 
@@ -33,8 +33,8 @@ colab = 'google.colab' in sys.modules
 if not colab:
     # on my pc
     img_size = 128
-    epochs = 4
-    steps_per_epoch = 5
+    epochs = 2
+    steps_per_epoch = 4
 
 json_path = EPath('style_transfert_parameters.json')
 
@@ -56,4 +56,3 @@ if json_path.exists():
 
 num_content_layers = len(content_layers)
 num_style_layers = len(style_layers)
-num_image_start = len(image_start)

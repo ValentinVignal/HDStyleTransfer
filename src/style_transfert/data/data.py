@@ -30,7 +30,7 @@ def extract_data():
 
     EPath('content').mkdir()
     EPath('style').mkdir()
-    possible_parents = ['.', '..']      # The working folder (my computer) or the parent folder (colab)
+    possible_parents = ['.', '..']  # The working folder (my computer) or the parent folder (colab)
     data_found = False
     for possible_parent in possible_parents:
         cp_zip = EPath(possible_parent, 'content.zip')
@@ -76,9 +76,30 @@ def get_data():
     return extract_data()
 
 
-def get_nb_combinaisons():
+def get_nb_combinations():
     content_list, style_list = get_data()
-    return len(content_list) * len(style_list) * var.num_image_start
+    num_image_start = get_num_image_start(
+        num_content=len(content_list),
+        num_style=len(style_list),
+        image_start_list_option=var.image_start
+    )
+    return len(content_list) * len(style_list) * num_image_start
+
+
+def get_num_image_start(num_content, num_style, image_start_list_option=var.image_start):
+    if 'all' in image_start_list_option:
+        return num_content * num_style
+    else:
+        num_image_start = 0
+        if 'all_content' in image_start_list_option:
+            num_image_start += num_content
+        elif 'content' in image_start_list_option:
+            num_image_start += 1
+        if 'all_style' in image_start_list_option:
+            num_image_start += num_style
+        elif 'style' in image_start_list_option:
+            num_image_start += 1
+        return num_image_start
 
 
 def get_start_path_list(content_path, style_path, image_start=var.image_start, data_path=None):
@@ -92,7 +113,7 @@ def get_start_path_list(content_path, style_path, image_start=var.image_start, d
     all_content = 'all' in image_start or 'all_content' in image_start
     all_style = 'all' in image_start or 'all_style' in image_start
     if (all_content or all_style) and data_path is None:
-        data_path = get_data()      # content_path_list, style_path_list
+        data_path = get_data()  # content_path_list, style_path_list
     start_path_list = []
     # Content
     if all_content:
@@ -131,7 +152,7 @@ def get_next_files(content_path_list, style_path_list, image_start=var.image_sta
                     start_path=start_path_list[0]
                 )
             else:
-                files = result_path.listdir(t='str')        # existing files in the result folder
+                files = result_path.listdir(t='str')  # existing files in the result folder
                 for start_path in start_path_list:
                     file_combination = FileCombination(
                         content_path=content_path,
@@ -141,7 +162,3 @@ def get_next_files(content_path_list, style_path_list, image_start=var.image_sta
                     if not functools.reduce(lambda x, y: x or y.startswith(file_combination.result_stem), files, False):
                         return file_combination
     return None
-
-
-
-
