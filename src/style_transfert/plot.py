@@ -6,7 +6,7 @@ from . import var as var
 
 
 def clear_output(wait=True):
-    if not var.gv.colab:
+    if not var.colab:
         plt.close('all')
         pass
     else:

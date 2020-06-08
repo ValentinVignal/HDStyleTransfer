@@ -1,3 +1,2 @@
-from . import global_variables as gv
-from . import parameters as p
+from .parameters import *
 from . import utils

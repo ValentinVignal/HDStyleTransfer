@@ -19,7 +19,7 @@ def tensor_to_image(tensor):
     return PIL.Image.fromarray(tensor)
 
 
-def load_img(path_to_img, max_dim=var.gv.img_size_nn):
+def load_img(path_to_img, size=var.img_size, dim_size=var.dim_size, exact_size=None):
     """
     function to load an image and limit its maximum dimension to 512 pixels.
     arg: path of the image
@@ -30,13 +30,41 @@ def load_img(path_to_img, max_dim=var.gv.img_size_nn):
     img = tf.image.convert_image_dtype(img, tf.float32)  # (h, l 3)
 
     shape = tf.cast(tf.shape(img)[:-1], tf.float32)
-    long_dim = max(shape)
-    scale = max_dim / long_dim
+    if exact_size is None:
+        dim = max(shape) if dim_size == 'max' else min(shape)
+        scale = size / dim
 
-    new_shape = tf.cast(shape * scale, tf.int32)
+        new_shape = tf.cast(shape * scale, tf.int32)
 
-    img = tf.image.resize(img, new_shape)  # (512, 512, 3)
-    img = img[tf.newaxis, :]  # (1, 512, 512, 3)
+        img = tf.image.resize(img, new_shape)  # (512, 512, 3)
+        img = img[tf.newaxis, :]  # (1, 512, 512, 3)
+    else:
+        # First resize so axis >= exact size
+        scale_x = exact_size[0] / img.shape[0]
+        scale_y = exact_size[1] / img.shape[1]
+        scale = max(scale_x, scale_y)
+
+        new_shape = tf.cast(shape * scale, tf.int32)
+
+        # img = tf.image.resize(img, new_shape)  # (x, y, 3) here img is > exact size with one axis ==
+        # Actually no need to reshape
+
+        img = img[tf.newaxis, :]  # (1, x, y, 3)
+
+        diff_x = (new_shape[1] - exact_size[1]) / new_shape[1]
+        diff_y = (new_shape[0] - exact_size[0]) / new_shape[0]
+        y1 = diff_y / 2
+        x1 = diff_x / 2
+        y2 = 1 - diff_y / 2
+        x2 = 1 - diff_x / 2
+        boxes = tf.concat([y1, x1, y2, x2], axis=0),
+
+        img = tf.image.crop_and_resize(
+            image=img,
+            boxes=boxes,
+            box_indices=[0],
+            crop_size=exact_size
+        )
     return img
 
 
@@ -52,29 +80,39 @@ def imshow(image, title=None):
         plt.title(title)
 
 
-def load_content_style_img(content_path, style_path, plot_it=False):
-    content_image = load_img(content_path, max_dim=var.gv.img_size_hd)
+def load_content_style_img(content_path, style_path, plot_it=False, start_path=None):
+    content_image = load_img(content_path, size=var.img_size)
     # gv.real_shape_hd_content = content_image.shape[1:3]
     # gv.real_shape_nn_content = (
     #     int(content_image.shape[1] / gv.ratio_size), int(content_image.shape[2] / gv.ratio_size))
-    style_image = load_img(style_path, max_dim=var.gv.img_size_hd)
+    style_image = load_img(style_path, size=var.img_size)
     # gv.real_shape_hd_style = style_image.shape[1:3]
     # gv.real_shape_nn_style = (content_image.shape[1] // gv.ratio_size, content_image.shape[2] // gv.ratio_size)
+    if start_path is None:
+        start_image = content_image
+    else:
+        start_image = load_img(start_path, exact_size=content_image.shape[1:3])        # Will resize if to the content image size
 
     content_style_images = ImageCouple(
         content_image=content_image,
-        style_image=style_image
+        style_image=style_image,
+        start_image=start_image
     )
 
     if plot_it:
         plt.close('all')
         plt.ion()
         plt.show()
-        plt.subplot(1, 2, 1)
+
+        plt.subplot(1, 3, 1)
         imshow(content_image, 'Content Image')
 
-        plt.subplot(1, 2, 2)
+        plt.subplot(1, 3, 2)
         imshow(style_image, 'Style Image')
+
+        plt.subplot(1, 3, 3)
+        imshow(start_image, 'Start Image')
+
         plt.draw()
         plt.pause(0.001)
     # return content_image, style_image
