@@ -78,15 +78,20 @@ def get_data():
 
 def get_nb_combinations():
     content_list, style_list = get_data()
+    nb_combinations = len(content_list) * len(style_list)
+    if var.use_tf_hub:
+        return nb_combinations
     num_image_start = get_num_image_start(
         num_content=len(content_list),
         num_style=len(style_list),
         image_start_list_option=var.image_start
     )
-    return len(content_list) * len(style_list) * num_image_start
+    return nb_combinations * num_image_start
 
 
 def get_num_image_start(num_content, num_style, image_start_list_option=var.image_start):
+    if var.use_tf_hub:
+        return 1
     if 'all' in image_start_list_option:
         return num_content * num_style
     else:
@@ -110,6 +115,8 @@ def get_start_path_list(content_path, style_path, image_start=var.image_start, d
     :param image_start:
     :return: The list of image to start style transfert from
     """
+    if var.use_tf_hub:
+        return [content_path]
     all_content = 'all' in image_start or 'all_content' in image_start
     all_style = 'all' in image_start or 'all_style' in image_start
     if (all_content or all_style) and data_path is None:

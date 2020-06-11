@@ -91,7 +91,8 @@ def load_content_style_img(content_path, style_path, plot_it=False, start_path=N
     if start_path is None:
         start_image = content_image
     else:
-        start_image = load_img(start_path, exact_size=content_image.shape[1:3])        # Will resize if to the content image size
+        start_image = load_img(start_path,
+                               exact_size=content_image.shape[1:3])  # Will resize if to the content image size
 
     content_style_images = ImageCouple(
         content_image=content_image,
