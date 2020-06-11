@@ -105,7 +105,7 @@ def style_transfert(file_combination, extractor, optimizers, epochs=var.epochs,
     file_combination.results_folder.mkdir(exist_ok=True, parents=True)
     if use_tf_hub:
         hub_module = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/1')
-        stylized_image = hub_module(tf.constant(image_couple.content_image), tf.constant(image_couple.style_image))
+        stylized_image = hub_module(tf.constant(image_couple.content_image), tf.constant(image_couple.style_image))[0]
         # stylized_image = image_couple.content_image
         plot.display(stylized_image)
         file_path = file_combination.results_folder / f'{file_combination.result_stem}.png'
