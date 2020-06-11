@@ -36,7 +36,7 @@ style_layers = [
 
 image_start = ['content', 'style']  # all_content, style, all_style, all
 
-use_tf_hub = True       # Use the tf style transfert
+use_tf_hub = False       # Use the tf style transfert
 
 colab = 'google.colab' in sys.modules
 
