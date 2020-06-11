@@ -19,8 +19,8 @@ class StyleContentModel(tf.keras.models.Model):
     def call(self, inputs):
         """Expects float input in [0,1]"""
         inputs = inputs * 255.0
-        # preprocessed_input = tf.keras.applications.vgg19.preprocess_input(inputs)
-        outputs = self.vgg(inputs)
+        preprocessed_input = tf.keras.applications.vgg19.preprocess_input(inputs)
+        outputs = self.vgg(preprocessed_input)
         style_outputs, content_outputs, content_gram_outputs = (outputs[:self.num_style_layers],
                                                                 outputs[self.num_style_layers:],
                                                                 outputs[:self.num_content_gram_layers])

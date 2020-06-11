@@ -1,4 +1,5 @@
 import tensorflow as tf
+import tensorflow_hub as hub
 import gc
 import loadbar
 
@@ -83,7 +84,7 @@ def create_train_step(extractor, optimizers, content_targets, style_targets, con
 
 
 def style_transfert(file_combination, extractor, optimizers, epochs=var.epochs,
-                    steps_per_epoch=var.steps_per_epoch):
+                    steps_per_epoch=var.steps_per_epoch, use_tf_hub=var.use_tf_hub):
     """
 
     :param content_path:
@@ -101,37 +102,46 @@ def style_transfert(file_combination, extractor, optimizers, epochs=var.epochs,
         start_path=file_combination.start_path.str,
         plot_it=True
     )
-    content_targets = extractor(image_couple.content_image)['content']
-    style_targets = extractor(image_couple.style_image)['style']
-    content_gram_targets = extractor(image_couple.content_image)['content_gram']
-
     file_combination.results_folder.mkdir(exist_ok=True, parents=True)
-    train_step = create_train_step(
-        extractor=extractor,
-        optimizers=optimizers,
-        content_targets=content_targets,
-        style_targets=style_targets,
-        content_gram_targets=content_gram_targets,
-        is_start_content=file_combination.is_start_content
-    )
-    image = tf.Variable(image_couple.start_image)
-    bar_epoch = loadbar.ColorBar(color=loadbar.Colors.cyan, max=epochs, title='Epoch', show_eta=False, show_time=True)
-    bar_epoch.start()
-    nb_steps = 0
-    for n in range(epochs):
-        # pb = ProgressBar(max_iteration=(n + 1) * varsteps_per_epoch, title=f'Epoch {n + 1}/{varepochs}')
-        bar_epoch.update(step=n, end='\n')
+    if use_tf_hub:
+        hub_module = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/1')
+        stylized_image = hub_module(tf.constant(image_couple.content_image), tf.constant(image_couple.style_image))
+        # stylized_image = image_couple.content_image
+        plot.display(stylized_image)
+        file_path = file_combination.results_folder / f'{file_combination.result_stem}.png'
+        images.tensor_to_image(stylized_image).save(file_path.str)
+    else:
+        content_targets = extractor(image_couple.content_image)['content']
+        style_targets = extractor(image_couple.style_image)['style']
+        content_gram_targets = extractor(image_couple.content_image)['content_gram']
 
-        bar_step = loadbar.LoadBar(max=(n + 1) * steps_per_epoch, title='Step')
-        bar_step.start()
-        for m in range((n + 1) * steps_per_epoch):
-            train_step(image=image)
-            nb_steps += 1
-            bar_step.update()
-        bar_step.end()
-        plot.display(image)
-        file_name = file_combination.results_folder / f'{file_combination.result_stem}_step_{nb_steps}.png'
-        images.tensor_to_image(image).save(file_name.str)
-    bar_epoch.end()
-    del image_couple, image, train_step
-    gc.collect()
+        train_step = create_train_step(
+            extractor=extractor,
+            optimizers=optimizers,
+            content_targets=content_targets,
+            style_targets=style_targets,
+            content_gram_targets=content_gram_targets,
+            is_start_content=file_combination.is_start_content
+        )
+        image = tf.Variable(image_couple.start_image)
+        bar_epoch = loadbar.ColorBar(color=loadbar.Colors.cyan, max=epochs, title='Epoch', show_eta=False,
+                                     show_time=True)
+        bar_epoch.start()
+        nb_steps = 0
+        for n in range(epochs):
+            # pb = ProgressBar(max_iteration=(n + 1) * varsteps_per_epoch, title=f'Epoch {n + 1}/{varepochs}')
+            bar_epoch.update(step=n, end='\n')
+
+            bar_step = loadbar.LoadBar(max=(n + 1) * steps_per_epoch, title='Step')
+            bar_step.start()
+            for m in range((n + 1) * steps_per_epoch):
+                train_step(image=image)
+                nb_steps += 1
+                bar_step.update()
+            bar_step.end()
+            plot.display(image)
+            file_name = file_combination.results_folder / f'{file_combination.result_stem}_step_{nb_steps}.png'
+            images.tensor_to_image(image).save(file_name.str)
+        bar_epoch.end()
+        del image_couple, image, train_step
+        gc.collect()
