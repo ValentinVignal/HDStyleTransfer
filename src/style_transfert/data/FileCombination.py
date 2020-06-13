@@ -27,7 +27,7 @@ class FileCombination:
 
     @property
     def result_stem(self):
-        if var.st_mode == STMode.Hub:
+        if var.st_mode == STMode.Hub.value:
             return 'hub'
         prefix = ''
         if self.is_content(self.start_path):
