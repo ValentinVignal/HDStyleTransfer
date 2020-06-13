@@ -1,5 +1,6 @@
 from epicpath import EPath
 from .. import variables as var
+from ..STMode import STMode
 
 
 class FileCombination:
@@ -26,7 +27,7 @@ class FileCombination:
 
     @property
     def result_stem(self):
-        if var.use_tf_hub:
+        if var.st_mode == STMode.Hub:
             return 'hub'
         prefix = ''
         if self.is_content(self.start_path):

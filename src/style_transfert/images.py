@@ -19,7 +19,24 @@ def tensor_to_image(tensor):
     return PIL.Image.fromarray(tensor)
 
 
-def load_img(path_to_img, size=var.img_size, dim_size=var.dim_size, exact_size=None):
+def reshape_keep_dim(image, size):
+    """
+
+    :param image: [batch, x, y, 3]
+    :param reshape_value:
+    :return:
+    """
+    shape = tf.cast(tf.shape(image)[1:-1], tf.float32)
+    dim = max(shape) if var.dim_size == 'max' else min(shape)
+    scale = size / dim
+
+    new_shape = tf.cast(shape * scale, tf.int32)
+
+    image = tf.image.resize(image, new_shape)  # (512, 512, 3)
+    return image
+
+
+def load_img(path_to_img, size=var.img_size, exact_size=None):
     """
     function to load an image and limit its maximum dimension to 512 pixels.
     arg: path of the image
@@ -29,16 +46,17 @@ def load_img(path_to_img, size=var.img_size, dim_size=var.dim_size, exact_size=N
     img = tf.image.decode_image(img, channels=3)  # (h, l, 3)
     img = tf.image.convert_image_dtype(img, tf.float32)  # (h, l 3)
 
-    shape = tf.cast(tf.shape(img)[:-1], tf.float32)
     if exact_size is None:
-        dim = max(shape) if dim_size == 'max' else min(shape)
-        scale = size / dim
-
-        new_shape = tf.cast(shape * scale, tf.int32)
-
-        img = tf.image.resize(img, new_shape)  # (512, 512, 3)
-        img = img[tf.newaxis, :]  # (1, 512, 512, 3)
+        # dim = max(shape) if dim_size == 'max' else min(shape)
+        # scale = size / dim
+        #
+        # new_shape = tf.cast(shape * scale, tf.int32)
+        #
+        # img = tf.image.resize(img, new_shape)  # (512, 512, 3)
+        # img = img[tf.newaxis, :]  # (1, 512, 512, 3)
+        img = reshape_keep_dim(img[tf.newaxis, :], size=size)
     else:
+        shape = tf.cast(tf.shape(img)[:-1], tf.float32)
         # First resize so axis >= exact size
         scale_x = exact_size[0] / img.shape[0]
         scale_y = exact_size[1] / img.shape[1]
