@@ -7,7 +7,7 @@ from ..STMode import STMode
 
 # Parameters
 
-st_mode = STMode.Noise     # Mode of the style transfert
+st_mode = STMode.Noise.value     # Mode of the style transfert
 
 img_size = 1024  # Size of one dimension of an image
 img_size_nn = 512       # Size of the image given to the nn for the noise mode

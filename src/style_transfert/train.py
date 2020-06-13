@@ -116,7 +116,7 @@ def create_train_step(extractor, optimizers, content_image, style_image, content
         :return: None
         """
         with tf.GradientTape() as tape:
-            if st_mode == STMode.Noise:
+            if st_mode == STMode.Noise.value:
                 # Deform the image and resize it to a smaller image
                 # Make sure the all the image is given to the nn
                 deformed_images = deform_image(tf.concat([image, content_image], axis=0))
@@ -161,7 +161,7 @@ def style_transfert(file_combination, extractor, optimizers, epochs=var.epochs,
         plot_it=True
     )
     file_combination.results_folder.mkdir(exist_ok=True, parents=True)
-    if st_mode == STMode.Hub:
+    if st_mode == STMode.Hub.value:
         hub_module = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/1')
         stylized_image = hub_module(tf.constant(image_couple.content_image), tf.constant(image_couple.style_image))[0]
         # stylized_image = image_couple.content_image

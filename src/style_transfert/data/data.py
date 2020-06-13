@@ -91,7 +91,7 @@ def get_nb_combinations():
 
 
 def get_num_image_start(num_content, num_style, image_start_list_option=var.image_start):
-    if var.st_mode == STMode.Hub:
+    if var.st_mode == STMode.Hub.value:
         return 1
     if 'all' in image_start_list_option:
         return num_content * num_style
@@ -116,7 +116,7 @@ def get_start_path_list(content_path, style_path, image_start=var.image_start, d
     :param image_start:
     :return: The list of image to start style transfert from
     """
-    if var.st_mode == STMode.Hub:
+    if var.st_mode == STMode.Hub.value:
         return [content_path]
     all_content = 'all' in image_start or 'all_content' in image_start
     all_style = 'all' in image_start or 'all_style' in image_start
