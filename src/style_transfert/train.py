@@ -60,16 +60,18 @@ def deform_image(image):
     # Make sure the all the image is given to the nn
 
     final_shape = tuple([int((var.img_size_nn / var.img_size) * s) for s in image.shape[1:3]])
+    batch = image.shape[0]
 
     # Add slight noise in the image
     noise = tf.random.normal(
         shape=image.shape,
         mean=0.0,
-        stddev=0.1  # 5% of the value in the image
+        stddev=0.01  # 5% of the value in the image
     )
     noisy_image = noise + image
 
 
+    # Padding
     padding_size = 32
     padding = tf.pad(
         tensor=tf.random.uniform(
@@ -87,10 +89,34 @@ def deform_image(image):
         mode='CONSTANT',
         constant_values=0
     )
-    reshaped_image = tf.image.resize(
-        padded_image,
-        final_shape
+
+    # Crop and resize
+
+    boxe_sizes = tf.random.uniform(
+        shape=(batch, 2, 2),
+        minval=0,
+        maxval=padding_size/var.img_size,
+        dtype=tf.float32
     )
+    boxes = tf.concat(
+        [
+            boxe_sizes[:, :, 0],
+            1 - boxe_sizes[:, :, 1]
+        ],
+        axis=1,
+    )       # (batch, 4)
+
+    reshaped_image =tf.image.crop_and_resize(
+        image=padded_image,
+        boxes=boxes,
+        box_indices=tf.range(batch),
+        crop_size=final_shape
+    )
+
+    # reshaped_image = tf.image.resize(
+    #     padded_image,
+    #     final_shape
+    # )
     return reshaped_image
 
 
