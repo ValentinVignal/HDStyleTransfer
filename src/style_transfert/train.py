@@ -128,7 +128,6 @@ def create_train_step(extractor, optimizers, content_image, style_image, content
     :param image_couple: images of content and style
     :return: train step
     """
-    style_targets = extractor(style_image)['style']
 
     @tf.function
     def train_step(image):
@@ -144,17 +143,21 @@ def create_train_step(extractor, optimizers, content_image, style_image, content
             if st_mode == STMode.Noise.value:
                 # Deform the image and resize it to a smaller image
                 # Make sure the all the image is given to the nn
-                deformed_images = deform_image(tf.concat([image, content_image], axis=0))
-                image_nn, content_nn = deformed_images[:1], deformed_images[1:]
+                style_image_reshaped = images.reshape_to_exact_dim(style_image, image.shape[1:-1])
+                deformed_images = deform_image(tf.concat([image, content_image, style_image_reshaped], axis=0))
+
+                image_nn, content_nn, style_nn = deformed_images[0:1], deformed_images[1:2], deformed_images[2:3]
             else:
                 image_nn = image
                 content_nn = content_image
-            outputs_content = extractor(content_nn)
+                style_nn = style_image
             outputs = extractor(image_nn)
+            outputs_content = extractor(content_nn)
+            outputs_style = extractor(style_nn)
             loss = style_content_loss(
                 outputs=outputs,
                 content_targets=outputs_content['content'],
-                style_targets=style_targets,
+                style_targets=outputs_style['style'],
                 content_gram_targets=content_gram_targets,
                 is_start_content=is_start_content
             )

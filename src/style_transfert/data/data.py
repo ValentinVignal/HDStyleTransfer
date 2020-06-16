@@ -80,7 +80,7 @@ def get_data():
 def get_nb_combinations():
     content_list, style_list = get_data()
     nb_combinations = len(content_list) * len(style_list)
-    if var.st_mode == STMode.Hub:
+    if var.st_mode == STMode.Hub.value:
         return nb_combinations
     num_image_start = get_num_image_start(
         num_content=len(content_list),
