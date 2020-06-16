@@ -20,6 +20,20 @@ def clip_0_1(image):
     return tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0)
 
 
+def loss_function(tensor1, tensor2, type=var.loss):
+    """
+
+    :param tensor1:
+    :param tensor2:
+    :param type:
+    :return:
+    """
+    if type == 'l2':
+        return tf.reduce_mean((tensor1 - tensor2) ** 2)
+    elif type == 'l1':
+        return tf.reduce_mean(tf.abs(tensor1 - tensor2))
+
+
 def style_content_loss(outputs, content_targets, style_targets, content_gram_targets=None, is_start_content=True):
     """
 
@@ -34,7 +48,9 @@ def style_content_loss(outputs, content_targets, style_targets, content_gram_tar
                            for name in style_outputs.keys()]) / var.num_style_layers
     style_loss *= var.style_weight
 
-    content_loss = var.content_weight * tf.add_n([tf.reduce_mean((content_outputs[name] - content_targets[name]) ** 2)
+    # content_loss = var.content_weight * tf.add_n([tf.reduce_mean((content_outputs[name] - content_targets[name]) ** 2)
+    #                                               for name in content_outputs.keys()]) / var.num_content_layers
+    content_loss = var.content_weight * tf.add_n([loss_function(content_outputs[name], content_targets[name])
                                                   for name in content_outputs.keys()]) / var.num_content_layers
     if content_gram_targets is not None and var.content_gram_weight != 0:
         content_gram_outputs = outputs['content_gram']
