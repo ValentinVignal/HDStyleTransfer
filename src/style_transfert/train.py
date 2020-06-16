@@ -44,7 +44,7 @@ def style_content_loss(outputs, content_targets, style_targets, content_gram_tar
     """
     style_outputs = outputs['style']
     content_outputs = outputs['content']
-    style_loss = tf.add_n([tf.reduce_mean((style_outputs[name] - style_targets[name]) ** 2)
+    style_loss = tf.add_n([loss_function(style_outputs[name], style_targets[name])
                            for name in style_outputs.keys()]) / var.num_style_layers
     style_loss *= var.style_weight
 
@@ -55,7 +55,7 @@ def style_content_loss(outputs, content_targets, style_targets, content_gram_tar
     if content_gram_targets is not None and var.content_gram_weight != 0:
         content_gram_outputs = outputs['content_gram']
         content_loss += var.content_gram_weight * tf.add_n([
-            tf.reduce_mean((content_gram_outputs[name] - content_gram_targets[name]) ** 2)
+            loss_function(content_gram_outputs[name], content_gram_targets[name])
             for name in content_gram_outputs.keys()
         ]) / var.num_content_gram_layers
 
