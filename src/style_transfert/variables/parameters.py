@@ -23,7 +23,7 @@ steps_per_epoch = 20
 lr = 2e-2
 
 content_layers = [
-    'block5_conv3'
+    'block5_conv2'
 ]
 
 content_gram_layers = [
