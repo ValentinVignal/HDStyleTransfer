@@ -41,6 +41,8 @@ style_layers = [
 
 image_start = ['content', 'style']  # all_content, style, all_style, all
 
+loss = 'l1'
+
 colab = 'google.colab' in sys.modules
 
 if not colab:
@@ -73,6 +75,7 @@ if json_path.exists():
         content_gram_layers = utils.get_key(data, 'content_gram_layers', content_gram_layers)
         style_layers = utils.get_key(data, 'style_layers', style_layers)
         image_start = utils.get_key(data, 'image_start', image_start)
+        loss = utils.get_key(data, 'loss', loss)
 
 num_content_layers = len(content_layers)
 num_content_gram_layers = len(content_gram_layers)
