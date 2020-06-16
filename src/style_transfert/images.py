@@ -36,6 +36,44 @@ def reshape_keep_dim(image, size):
     return image
 
 
+def reshape_to_exact_dim(image, exact_size):
+    """
+
+    :param image:
+    :param exact_size:
+    :return:
+    """
+    if len(tf.shape(image)) == 3:
+        # (x, y, 3)
+        image = image[tf.newaxis, :]  # (1, x, y, 3)
+    shape = tf.cast(tf.shape(image)[1:-1], tf.float32)
+    # First resize so axis >= exact size
+    scale_x = exact_size[0] / shape[0]
+    scale_y = exact_size[1] / shape[1]
+    scale = tf.math.maximum(scale_x, scale_y)
+
+    new_shape = tf.cast(shape * scale, tf.int32)
+
+    # image = tf.image.resize(image, new_shape)  # (x, y, 3) here image is > exact size with one axis ==
+    # Actually no need to reshape
+
+    diff_x = (new_shape[1] - exact_size[1]) / new_shape[1]
+    diff_y = (new_shape[0] - exact_size[0]) / new_shape[0]
+    y1 = diff_y / 2
+    x1 = diff_x / 2
+    y2 = 1 - diff_y / 2
+    x2 = 1 - diff_x / 2
+    boxes = tf.stack([y1, x1, y2, x2], axis=0),
+
+    image = tf.image.crop_and_resize(
+        image=image,
+        boxes=boxes,
+        box_indices=[0],
+        crop_size=exact_size
+    )
+    return image
+
+
 def load_img(path_to_img, size=var.img_size, exact_size=None):
     """
     function to load an image and limit its maximum dimension to 512 pixels.
@@ -56,33 +94,35 @@ def load_img(path_to_img, size=var.img_size, exact_size=None):
         # img = img[tf.newaxis, :]  # (1, 512, 512, 3)
         img = reshape_keep_dim(img[tf.newaxis, :], size=size)
     else:
-        shape = tf.cast(tf.shape(img)[:-1], tf.float32)
-        # First resize so axis >= exact size
-        scale_x = exact_size[0] / img.shape[0]
-        scale_y = exact_size[1] / img.shape[1]
-        scale = max(scale_x, scale_y)
-
-        new_shape = tf.cast(shape * scale, tf.int32)
-
-        # img = tf.image.resize(img, new_shape)  # (x, y, 3) here img is > exact size with one axis ==
-        # Actually no need to reshape
-
-        img = img[tf.newaxis, :]  # (1, x, y, 3)
-
-        diff_x = (new_shape[1] - exact_size[1]) / new_shape[1]
-        diff_y = (new_shape[0] - exact_size[0]) / new_shape[0]
-        y1 = diff_y / 2
-        x1 = diff_x / 2
-        y2 = 1 - diff_y / 2
-        x2 = 1 - diff_x / 2
-        boxes = tf.concat([y1, x1, y2, x2], axis=0),
-
-        img = tf.image.crop_and_resize(
-            image=img,
-            boxes=boxes,
-            box_indices=[0],
-            crop_size=exact_size
-        )
+        img = reshape_to_exact_dim(img, exact_size)
+        # if len(tf.shape(img)) == 3:
+        #     # (x, y, 3)
+        #     img = img[tf.newaxis, :]  # (1, x, y, 3)
+        # shape = tf.cast(tf.shape(img)[1:-1], tf.float32)
+        # # First resize so axis >= exact size
+        # scale_x = exact_size[0] / img.shape[0]
+        # scale_y = exact_size[1] / img.shape[1]
+        # scale = tf.math.maximum(scale_x, scale_y)
+        #
+        # new_shape = tf.cast(shape * scale, tf.int32)
+        #
+        # # img = tf.image.resize(img, new_shape)  # (x, y, 3) here img is > exact size with one axis ==
+        # # Actually no need to reshape
+        #
+        # diff_x = (new_shape[1] - exact_size[1]) / new_shape[1]
+        # diff_y = (new_shape[0] - exact_size[0]) / new_shape[0]
+        # y1 = diff_y / 2
+        # x1 = diff_x / 2
+        # y2 = 1 - diff_y / 2
+        # x2 = 1 - diff_x / 2
+        # boxes = tf.concat([y1, x1, y2, x2], axis=0),
+        #
+        # img = tf.image.crop_and_resize(
+        #     image=img,
+        #     boxes=boxes,
+        #     box_indices=[0],
+        #     crop_size=exact_size
+        # )
     return img
 
 
