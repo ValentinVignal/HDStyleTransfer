@@ -5,7 +5,6 @@ class ParametersManager:
     def __init__(self):
         self._parameters = dict()
         self._grid_p = 0
-        self._parameters_grid_p = dict()
 
     @property
     def grid_p(self):
@@ -16,8 +15,6 @@ class ParametersManager:
         assert(grid_p < self.length)
         self._grid_p = grid_p
         # Set to 0
-        for key in self._parameters:
-            self._parameters_grid_p[key] = 0
         for i in range(grid_p):
             # Increment 1 grip_p times
             for key, value in self._parameters.items():
@@ -31,7 +28,7 @@ class ParametersManager:
                         break
 
     def __setattr__(self, key, value):
-        if key not in ['_parameters', '_grid_p', '_parameters_grid_p', 'grid_p']:
+        if key not in ['_parameters', '_grid_p', 'grid_p']:
             self.add(key, value)
         else:
             object.__setattr__(self, key, value)
@@ -48,7 +45,6 @@ class ParametersManager:
 
     def add(self, name, default_value):
         self._parameters[name] = Parameter(name, default_value)
-        self._parameters_grid_p[name] = 0
 
     @property
     def length(self):
@@ -68,5 +64,18 @@ class ParametersManager:
 
     def num(self, key):
         return self._parameters[key].num()
+
+    def save_txt(self, path):
+        s = '\t\tParameters\n\n'
+        s += 'Constant parameters:\n'
+        for key, value in self._parameters.items():
+            if value.length == 1:
+                s += f'\t{key}: {value.value}\n'
+        s += 'Moving Parameters:\n'
+        for key, value in self._parameters.items():
+            if value.length > 1:
+                s += f'\t{key}: {value.values}\n'
+        with open(path, 'w') as file:
+            file.write(s)
 
 

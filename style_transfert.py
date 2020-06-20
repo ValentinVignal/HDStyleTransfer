@@ -1,8 +1,10 @@
 import src
+from epicpath import EPath
 
 content_path_list, style_path_list = src.st.data.get_data()
 
 file_combination = src.st.data.get_next_files(content_path_list, style_path_list)
+
 
 if file_combination is not None:
     # image_couple = src.images.load_content_style_img(content_path.as_posix(), style_path.as_posix(), plot_it=True)
@@ -27,6 +29,9 @@ if file_combination is not None:
         epochs=src.st.var.param.epochs.value,
         steps_per_epoch=src.st.var.param.steps_per_epoch.value
     )
+
+    if not EPath('results/parameters.txt').exists():
+        src.st.var.param.save_txt(EPath('results/parameters.txt'))
 else:
     print('No result_path left...')
 
