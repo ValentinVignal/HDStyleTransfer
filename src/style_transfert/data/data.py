@@ -95,7 +95,7 @@ def get_num_image_start(num_content, num_style, image_start_list_option=options.
     if options.st_mode == STMode.Hub.value:
         return 1
     if 'all' in image_start_list_option:
-        return num_content * num_style * param.length
+        return num_content * num_style
     else:
         num_image_start = 0
         if 'all_content' in image_start_list_option:
@@ -106,7 +106,7 @@ def get_num_image_start(num_content, num_style, image_start_list_option=options.
             num_image_start += num_style
         elif 'style' in image_start_list_option:
             num_image_start += 1
-        return num_image_start * param.length
+        return num_image_start
 
 
 def get_start_path_list(content_path, style_path, image_start=options.image_start, data_path=None):

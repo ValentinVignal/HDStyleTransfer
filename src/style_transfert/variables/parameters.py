@@ -16,7 +16,7 @@ p.img_size_nn = 512       # Size of the image given to the nn for the noise mode
 p.dim_size = 'min'  # To choose whether the image size if the biggest or smallest axis
 p.style_weight = 1e-2  # Importance of style
 p.content_weight = 1e4  # Importance of content
-p.content_gram_weight = 1e-4
+p.content_gram_weight = 0
 p.content_weight_multiplicator = 10
 p.total_variation_weight = 30  # How much to reduce high frequencies
 
@@ -25,7 +25,7 @@ p.steps_per_epoch = 20
 p.lr = 2e-2
 
 p.content_layers = [
-    'block5_conv2'
+    'block5_conv3'
 ]
 
 p.content_gram_layers = [
