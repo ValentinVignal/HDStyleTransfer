@@ -21,6 +21,9 @@ if file_combination is not None:
         lr=src.st.var.param.lr.value
     )
 
+    print('length', src.st.var.param.length)
+    print('content layers', src.st.var.param.content_layers.length, src.st.var.param.content_layers.value)
+
     file_combination.results_folder.mkdir()
     src.st.train.style_transfert(
         file_combination=file_combination,
