@@ -65,14 +65,17 @@ if style_transfert_parameters_path.exists():
 
 style_transfert_parameters_grid_path = EPath('style_transfert_parameters_grid.json')
 
+print('grid file exist', style_transfert_parameters_grid_path.exists())
 if style_transfert_parameters_grid_path.exists():
     # Create the grid
     with open(style_transfert_parameters_grid_path, 'r') as json_file:
         data = json.load(json_file)
         for key, values in data.items():
+            print('key in grid file', key)
             if value is not None:
                 p.set_grid_values(key, values)
 
+print('length of p in parameters', p.length)
 
 
 
