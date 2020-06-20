@@ -133,8 +133,12 @@ content.zip
 style/
 style.zip
 results/
-global_variables.json
-parameters.json
+
+# Style transfert parameters
+style_transfert_parameters.json
+style_transfert_parameters_grid.json
+style_transfert_options.json
+
 trash/
 
 

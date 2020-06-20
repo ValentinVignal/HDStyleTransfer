@@ -4,8 +4,8 @@ from . import variables as var
 
 
 class StyleContentModel(tf.keras.models.Model):
-    def __init__(self, style_layers=var.style_layers, content_layers=var.content_layers,
-                 content_gram_layers=var.content_gram_layers):
+    def __init__(self, style_layers=var.param.style_layers.value, content_layers=var.param.content_layers.value,
+                 content_gram_layers=var.param.content_gram_layers.value):
         super(StyleContentModel, self).__init__()
         self.vgg = model.vgg_layers(style_layers + content_layers + content_gram_layers)
         self.style_layers = style_layers

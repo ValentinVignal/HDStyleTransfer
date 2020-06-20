@@ -5,7 +5,7 @@ from . import variables as var
 
 
 class Optimizers:
-    def __init__(self, shape=(1,), lr=var.lr):
+    def __init__(self, shape=(1,), lr=var.param.lr.value):
         self.optimizers = None
         self.lr = lr
         self.init_optimizers(shape=shape)

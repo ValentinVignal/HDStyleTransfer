@@ -20,7 +20,7 @@ def clip_0_1(image):
     return tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0)
 
 
-def loss_function(tensor1, tensor2, type=var.loss):
+def loss_function(tensor1, tensor2, type=var.param.loss.value):
     """
 
     :param tensor1:
@@ -45,22 +45,22 @@ def style_content_loss(outputs, content_targets, style_targets, content_gram_tar
     style_outputs = outputs['style']
     content_outputs = outputs['content']
     style_loss = tf.add_n([loss_function(style_outputs[name], style_targets[name])
-                           for name in style_outputs.keys()]) / var.num_style_layers
-    style_loss *= var.style_weight
+                           for name in style_outputs.keys()]) / var.param.style_layers.num
+    style_loss *= var.param.style_weight.value
 
-    # content_loss = var.content_weight * tf.add_n([tf.reduce_mean((content_outputs[name] - content_targets[name]) ** 2)
-    #                                               for name in content_outputs.keys()]) / var.num_content_layers
-    content_loss = var.content_weight * tf.add_n([loss_function(content_outputs[name], content_targets[name])
-                                                  for name in content_outputs.keys()]) / var.num_content_layers
-    if content_gram_targets is not None and var.content_gram_weight != 0:
+    # content_loss = var.param.content_weight * tf.add_n([tf.reduce_mean((content_outputs[name] - content_targets[name]) ** 2)
+    #                                               for name in content_outputs.keys()]) / var.param.num_content_layers
+    content_loss = var.param.content_weight.value * tf.add_n([loss_function(content_outputs[name], content_targets[name])
+                                                  for name in content_outputs.keys()]) / var.param.content_layers.num
+    if content_gram_targets is not None and var.param.content_gram_weight.value != 0:
         content_gram_outputs = outputs['content_gram']
-        content_loss += var.content_gram_weight * tf.add_n([
+        content_loss += var.param.content_gram_weight.value * tf.add_n([
             loss_function(content_gram_outputs[name], content_gram_targets[name])
             for name in content_gram_outputs.keys()
-        ]) / var.num_content_gram_layers
+        ]) / var.param.content_gram_layers.num
 
     if not is_start_content:
-        content_loss *= var.content_weight_multiplicator
+        content_loss *= var.param.content_weight_multiplicator.value
     loss = style_loss + content_loss
     return loss
 
@@ -75,7 +75,7 @@ def deform_image(image):
     # Deform the image and resize it to a smaller image
     # Make sure the all the image is given to the nn
 
-    final_shape = tuple([int((var.img_size_nn / var.img_size) * s) for s in image.shape[1:3]])
+    final_shape = tuple([int((var.param.img_size_nn.value / var.param.img_size.value) * s) for s in image.shape[1:3]])
     batch = image.shape[0]
 
     # Add slight noise in the image
@@ -110,7 +110,7 @@ def deform_image(image):
     boxe_sizes = tf.random.uniform(
         shape=(batch, 2, 2),
         minval=0,
-        maxval=padding_size / var.img_size,
+        maxval=padding_size / var.param.img_size.value,
         dtype=tf.float32
     )
     boxes = tf.concat(
@@ -136,7 +136,7 @@ def deform_image(image):
 
 
 def create_train_step(extractor, optimizers, content_image, style_image, content_gram_targets,
-                      is_start_content=True, st_mode=var.st_mode):
+                      is_start_content=True, st_mode=var.options.st_mode):
     """
     Creates and returns the train step function ton do style transfert iteration
     :param extractor: model used to extract the features layers
@@ -177,7 +177,7 @@ def create_train_step(extractor, optimizers, content_image, style_image, content
                 content_gram_targets=content_gram_targets,
                 is_start_content=is_start_content
             )
-            loss += var.total_variation_weight * tf.image.total_variation(image)
+            loss += var.param.total_variation_weight.value * tf.image.total_variation(image)
         grad = tape.gradient(loss, image)
         optimizers.optimizers[0].apply_gradients([(grad, image)])
         image.assign(clip_0_1(image))
@@ -185,8 +185,8 @@ def create_train_step(extractor, optimizers, content_image, style_image, content
     return train_step
 
 
-def style_transfert(file_combination, extractor, optimizers, epochs=var.epochs,
-                    steps_per_epoch=var.steps_per_epoch, st_mode=var.st_mode):
+def style_transfert(file_combination, extractor, optimizers, epochs=var.param.epochs.value,
+                    steps_per_epoch=var.param.steps_per_epoch.value, st_mode=var.options.st_mode):
     """
 
     :param content_path:

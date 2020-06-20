@@ -27,7 +27,7 @@ def reshape_keep_dim(image, size):
     :return:
     """
     shape = tf.cast(tf.shape(image)[1:-1], tf.float32)
-    dim = max(shape) if var.dim_size == 'max' else min(shape)
+    dim = max(shape) if var.param.dim_size.value == 'max' else min(shape)
     scale = size / dim
 
     new_shape = tf.cast(shape * scale, tf.int32)
@@ -74,7 +74,7 @@ def reshape_to_exact_dim(image, exact_size):
     return image
 
 
-def load_img(path_to_img, size=var.img_size, exact_size=None):
+def load_img(path_to_img, size=var.param.img_size.value, exact_size=None):
     """
     function to load an image and limit its maximum dimension to 512 pixels.
     arg: path of the image
@@ -139,11 +139,11 @@ def imshow(image, title=None):
 
 
 def load_content_style_img(content_path, style_path, plot_it=False, start_path=None):
-    content_image = load_img(content_path, size=var.img_size)
+    content_image = load_img(content_path, size=var.param.img_size.value)
     # gv.real_shape_hd_content = content_image.shape[1:3]
     # gv.real_shape_nn_content = (
     #     int(content_image.shape[1] / gv.ratio_size), int(content_image.shape[2] / gv.ratio_size))
-    style_image = load_img(style_path, size=var.img_size)
+    style_image = load_img(style_path, size=var.param.img_size.value)
     # gv.real_shape_hd_style = style_image.shape[1:3]
     # gv.real_shape_nn_style = (content_image.shape[1] // gv.ratio_size, content_image.shape[2] // gv.ratio_size)
     if start_path is None:
