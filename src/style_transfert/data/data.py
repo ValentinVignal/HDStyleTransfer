@@ -4,7 +4,8 @@ import tensorflow as tf
 import shutil
 import functools
 
-from .. import variables as var
+from ..variables import options
+from ..variables import param
 from .FileCombination import FileCombination
 from ..STMode import STMode
 
@@ -80,21 +81,21 @@ def get_data():
 def get_nb_combinations():
     content_list, style_list = get_data()
     nb_combinations = len(content_list) * len(style_list)
-    if var.st_mode == STMode.Hub.value:
+    if options.st_mode == STMode.Hub.value:
         return nb_combinations
     num_image_start = get_num_image_start(
         num_content=len(content_list),
         num_style=len(style_list),
-        image_start_list_option=var.image_start
+        image_start_list_option=options.image_start
     )
     return nb_combinations * num_image_start
 
 
-def get_num_image_start(num_content, num_style, image_start_list_option=var.image_start):
-    if var.st_mode == STMode.Hub.value:
+def get_num_image_start(num_content, num_style, image_start_list_option=options.image_start):
+    if options.st_mode == STMode.Hub.value:
         return 1
     if 'all' in image_start_list_option:
-        return num_content * num_style
+        return num_content * num_style * param.length
     else:
         num_image_start = 0
         if 'all_content' in image_start_list_option:
@@ -105,10 +106,10 @@ def get_num_image_start(num_content, num_style, image_start_list_option=var.imag
             num_image_start += num_style
         elif 'style' in image_start_list_option:
             num_image_start += 1
-        return num_image_start
+        return num_image_start * param.length
 
 
-def get_start_path_list(content_path, style_path, image_start=var.image_start, data_path=None):
+def get_start_path_list(content_path, style_path, image_start=options.image_start, data_path=None):
     """
 
     :param content_path:
@@ -116,7 +117,7 @@ def get_start_path_list(content_path, style_path, image_start=var.image_start, d
     :param image_start:
     :return: The list of image to start style transfert from
     """
-    if var.st_mode == STMode.Hub.value:
+    if options.st_mode == STMode.Hub.value:
         return [content_path]
     all_content = 'all' in image_start or 'all_content' in image_start
     all_style = 'all' in image_start or 'all_style' in image_start
@@ -136,7 +137,7 @@ def get_start_path_list(content_path, style_path, image_start=var.image_start, d
     return start_path_list
 
 
-def get_next_files(content_path_list, style_path_list, image_start=var.image_start, data_path=None):
+def get_next_files(content_path_list, style_path_list, image_start=options.image_start, data_path=None):
     """
 
     :param content_path_list: List of the content_path
@@ -157,16 +158,23 @@ def get_next_files(content_path_list, style_path_list, image_start=var.image_sta
                 return FileCombination(
                     content_path=content_path,
                     style_path=style_path,
-                    start_path=start_path_list[0]
+                    start_path=start_path_list[0],
+                    grid_p=0
                 )
             else:
                 files = result_path.listdir(t='str')  # existing files in the result folder
                 for start_path in start_path_list:
-                    file_combination = FileCombination(
-                        content_path=content_path,
-                        style_path=style_path,
-                        start_path=start_path
-                    )
-                    if not functools.reduce(lambda x, y: x or y.startswith(file_combination.result_stem), files, False):
-                        return file_combination
+                    for p in range(param.length):
+                        file_combination = FileCombination(
+                            content_path=content_path,
+                            style_path=style_path,
+                            start_path=start_path,
+                            grid_p=p
+                        )
+                        if not functools.reduce(
+                            lambda x, y: x or y.startswith(file_combination.result_stem),
+                                files,
+                                False
+                        ):
+                            return file_combination
     return None

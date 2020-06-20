@@ -1,13 +1,15 @@
 from epicpath import EPath
-from .. import variables as var
+from ..variables import options
+from ..variables import param
 from ..STMode import STMode
 
 
 class FileCombination:
-    def __init__(self, content_path, style_path, start_path=None):
+    def __init__(self, content_path, style_path, start_path=None, grid_p=0):
         self.content_path = EPath(content_path)
         self.style_path = EPath(style_path)
         self.start_path = self.content_path if start_path is None else EPath(start_path)
+        self.grid_p = grid_p
 
     @property
     def results_folder(self):
@@ -27,13 +29,15 @@ class FileCombination:
 
     @property
     def result_stem(self):
-        if var.st_mode == STMode.Hub.value:
+        if options.st_mode == STMode.Hub.value:
             return 'hub'
         prefix = ''
+        if len(param) > 1:
+            prefix += f'p{self.grid_p}_'
         if self.is_content(self.start_path):
-            prefix = '(content)_'
+            prefix += '(content)_'
         elif self.is_style(self.start_path):
-            prefix = '(style)_'
+            prefix += '(style)_'
         return prefix + self.start_path.rstem
 
 
