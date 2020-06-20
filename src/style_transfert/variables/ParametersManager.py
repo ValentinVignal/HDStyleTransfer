@@ -65,7 +65,7 @@ class ParametersManager:
     def num(self, key):
         return self._parameters[key].num()
 
-    def save_txt(self, path):
+    def save_all_txt(self, path):
         s = '\t\tParameters\n\n'
         s += 'Constant parameters:\n'
         for key, value in self._parameters.items():
@@ -75,6 +75,13 @@ class ParametersManager:
         for key, value in self._parameters.items():
             if value.length > 1:
                 s += f'\t{key}: {value.values}\n'
+        with open(path, 'w') as file:
+            file.write(s)
+
+    def save_current_txt(self, path):
+        s = f'\t\tParameters {self.grid_p}\n\n'
+        for key, value in self._parameters.items():
+            s += f'\t{key}: {value.value}\n'
         with open(path, 'w') as file:
             file.write(s)
 

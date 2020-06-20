@@ -30,8 +30,15 @@ if file_combination is not None:
         steps_per_epoch=src.st.var.param.steps_per_epoch.value
     )
 
-    if not EPath('results/parameters.txt').exists():
-        src.st.var.param.save_txt(EPath('results/parameters.txt'))
+    parameters_path = EPath('results/parameters.txt')
+    if not parameters_path.exists():
+        src.st.var.param.save_all_txt(parameters_path)
+    p_path = EPath(f'results/p{src.st.var.param.grid_p}.txt')
+    if not p_path.exists():
+        src.st.var.param.save_current_txt(p_path)
+
+
+
 else:
     print('No result_path left...')
 
