@@ -20,17 +20,17 @@ def clip_0_1(image):
     return tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0)
 
 
-def loss_function(tensor1, tensor2, type=var.param.loss.value):
+def loss_function(tensor1, tensor2, loss_type=var.param.loss.value):
     """
 
     :param tensor1:
     :param tensor2:
-    :param type:
+    :param loss_type:
     :return:
     """
-    if type == 'l2':
+    if loss_type == 'l2':
         return tf.reduce_mean((tensor1 - tensor2) ** 2)
-    elif type == 'l1':
+    elif loss_type == 'l1':
         return tf.reduce_mean(tf.abs(tensor1 - tensor2))
 
 
@@ -50,8 +50,10 @@ def style_content_loss(outputs, content_targets, style_targets, content_gram_tar
 
     # content_loss = var.param.content_weight * tf.add_n([tf.reduce_mean((content_outputs[name] - content_targets[name]) ** 2)
     #                                               for name in content_outputs.keys()]) / var.param.num_content_layers
-    content_loss = var.param.content_weight.value * tf.add_n([loss_function(content_outputs[name], content_targets[name])
-                                                  for name in content_outputs.keys()]) / var.param.content_layers.num
+    content_loss = var.param.content_weight.value * tf.add_n([
+        loss_function(content_outputs[name], content_targets[name])
+         for name in content_outputs.keys()
+    ]) / var.param.content_layers.num
     if content_gram_targets is not None and var.param.content_gram_weight.value != 0:
         content_gram_outputs = outputs['content_gram']
         content_loss += var.param.content_gram_weight.value * tf.add_n([
@@ -77,14 +79,7 @@ def deform_image(image):
 
     final_shape = tuple([int((var.param.img_size_nn.value / var.param.img_size.value) * s) for s in image.shape[1:3]])
     batch = image.shape[0]
-
-    # Add slight noise in the image
-    # noise = tf.random.normal(
-    #     shape=image.shape,
-    #     mean=0.0,
-    #     stddev=0.01  # 5% of the value in the image
-    # )
-    # noisy_image = noise + image
+    print('batch', batch)
 
     # Padding
     padding_size = 32
@@ -104,6 +99,7 @@ def deform_image(image):
         mode='CONSTANT',
         constant_values=0
     )
+    print('padded image', padded_image.shape)
 
     # Crop and resize
 
@@ -198,6 +194,7 @@ def style_transfert(file_combination, extractor, optimizers, epochs=var.param.ep
     :param steps_per_epoch:
     :return:
     """
+    print('file combination', file_combination.content_path, file_combination.style_path)
     image_couple = images.load_content_style_img(
         content_path=file_combination.content_path.str,
         style_path=file_combination.style_path.str,
