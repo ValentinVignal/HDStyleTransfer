@@ -40,5 +40,5 @@ class Parameter:
 
     @property
     def num(self):
-        return len(self.values[self.grid_p])
+        return len(self.value)
 
