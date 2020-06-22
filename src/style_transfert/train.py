@@ -79,7 +79,6 @@ def deform_image(image):
 
     final_shape = tuple([int((var.param.img_size_nn.value / var.param.img_size.value) * s) for s in image.shape[1:3]])
     batch = image.shape[0]
-    print('batch', batch)
 
     # Padding
     padding_size = 32
@@ -99,7 +98,6 @@ def deform_image(image):
         mode='CONSTANT',
         constant_values=0
     )
-    print('padded image', padded_image.shape)
 
     # Crop and resize
 
@@ -194,7 +192,6 @@ def style_transfert(file_combination, extractor, optimizers, epochs=var.param.ep
     :param steps_per_epoch:
     :return:
     """
-    print('file combination', file_combination.content_path, file_combination.style_path)
     image_couple = images.load_content_style_img(
         content_path=file_combination.content_path.str,
         style_path=file_combination.style_path.str,
