@@ -159,7 +159,7 @@ def get_next_files(content_path_list, style_path_list, image_start=options.image
                     content_path=content_path,
                     style_path=style_path,
                     start_path=start_path_list[0],
-                    grid_p=0
+                    n=0
                 )
             else:
                 files = result_path.listdir(t='str')  # existing files in the result folder
@@ -169,7 +169,7 @@ def get_next_files(content_path_list, style_path_list, image_start=options.image
                             content_path=content_path,
                             style_path=style_path,
                             start_path=start_path,
-                            grid_p=p
+                            n=p
                         )
                         if not functools.reduce(
                             lambda x, y: x or y.startswith(file_combination.result_stem),

@@ -8,7 +8,7 @@ file_combination = src.st.data.get_next_files(content_path_list, style_path_list
 
 if file_combination is not None:
     # image_couple = src.images.load_content_style_img(content_path.as_posix(), style_path.as_posix(), plot_it=True)
-    src.st.var.param.grid_p = file_combination.grid_p
+    src.st.var.param.n = file_combination.n
 
     extractor = src.st.StyleContentModel(
         style_layers=src.st.var.param.style_layers.value,
@@ -25,7 +25,7 @@ if file_combination is not None:
     parameters_path = EPath('results/parameters.txt')
     if not parameters_path.exists():
         src.st.var.param.save_all_txt(parameters_path)
-    p_path = EPath(f'results/p{src.st.var.param.grid_p}.txt')
+    p_path = EPath(f'results/p{src.st.var.param.n}.txt')
     if not p_path.exists():
         src.st.var.param.save_current_txt(p_path)
 

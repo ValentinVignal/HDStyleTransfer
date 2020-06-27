@@ -5,11 +5,11 @@ from ..STMode import STMode
 
 
 class FileCombination:
-    def __init__(self, content_path, style_path, start_path=None, grid_p=0):
+    def __init__(self, content_path, style_path, start_path=None, n=0):
         self.content_path = EPath(content_path)
         self.style_path = EPath(style_path)
         self.start_path = self.content_path if start_path is None else EPath(start_path)
-        self.grid_p = grid_p
+        self.n = n
 
     @property
     def results_folder(self):
@@ -33,7 +33,7 @@ class FileCombination:
             return 'hub'
         prefix = ''
         if len(param) > 1:
-            prefix += f'p{self.grid_p}_'
+            prefix += f'p{self.n}_'
         if self.is_content(self.start_path):
             prefix += '(content)_'
         elif self.is_style(self.start_path):
