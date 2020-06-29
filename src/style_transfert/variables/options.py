@@ -8,7 +8,7 @@ from ..STMode import STMode
 
 st_mode = STMode.Noise.value     # Mode of the style transfert
 
-image_start = ['content', 'style']  # all_content, style, all_style, all
+image_start = ['content']#, 'style']  # all_content, style, all_style, all
 
 colab = 'google.colab' in sys.modules
 if not colab:

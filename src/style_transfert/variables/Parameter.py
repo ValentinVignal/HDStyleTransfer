@@ -34,7 +34,7 @@ class Parameter:
 
     def update(self, updated_value):
         self.default_value = updated_value
-        self.values = [updated_value]
+        self.values = []
 
     def set_grid_values(self, grid_values):
         """
