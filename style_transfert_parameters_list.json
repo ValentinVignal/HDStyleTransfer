@@ -6,9 +6,6 @@
     "lr": 2,
     "params": [
       {
-        "content_weight": 1e5
-      },
-      {
         "content_weight": 1e6
       }
     ]
