@@ -16,6 +16,9 @@ if file_combination is not None:
         content_gram_layers=src.st.var.param.content_gram_layers.value
     )
 
+    if src.st.var.param.length > 1:
+        print(f'param: {src.st.var.param.n}')
+
     optimizers = src.st.Optimizers(
         shape=(1,),
         lr=src.st.var.param.lr.value
@@ -36,10 +39,6 @@ if file_combination is not None:
         epochs=src.st.var.param.epochs.value,
         steps_per_epoch=src.st.var.param.steps_per_epoch.value
     )
-
-
-
-
 else:
     print('No result_path left...')
 
