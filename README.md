@@ -1,4 +1,4 @@
-# HDStyleTransfert
+# HDStyleTransfer
 
 This repo is a personal project to perform style transfer between
 images. The goal was to create HD stylized images.
@@ -8,7 +8,7 @@ As you see in the results I successfully created acceptable stylized HD
 images using the GPU of
 [Google Colab](https://colab.research.google.com/). :tada:
 
-## Style Transfert
+## Style Transfer
 
 ### Results
 
@@ -22,7 +22,7 @@ Here are some results of my project:
 
 ### Google colab
 
-The file `style_transfert.ipynb` will perform the style transfert
+The file `style_transfer.ipynb` will perform the style transfert
 algorithm for a combination of given images and parameters.
 
 The steps for the setup are explained in the file.
@@ -30,11 +30,11 @@ The steps for the setup are explained in the file.
 
 ### Script
 
-The script `style_transfert.py` will generate one set of stylized images
+The script `style_transfer.py` will generate one set of stylized images
 for one combination of content/style images and parameters
 
 ```cmd
-python style_transfert.py
+python style_transfer.py
 ```
 
 The content and style images must be in a `content` and `style` folders
@@ -52,7 +52,7 @@ It will create a `results` folder with the stylized images in it.
 To apply the style transfert on several images, run the command
 
 ```cmd
-python style_transfert.py
+python style_transfer.py
 ```
 
  as many times as you need
