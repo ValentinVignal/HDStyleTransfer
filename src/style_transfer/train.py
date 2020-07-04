@@ -179,8 +179,8 @@ def create_train_step(extractor, optimizers, content_image, style_image, content
     return train_step
 
 
-def style_transfert(file_combination, extractor, optimizers, epochs=var.param.epochs.value,
-                    steps_per_epoch=var.param.steps_per_epoch.value, st_mode=var.options.st_mode):
+def style_transfer(file_combination, extractor, optimizers, epochs=var.param.epochs.value,
+                   steps_per_epoch=var.param.steps_per_epoch.value, st_mode=var.options.st_mode):
     """
 
     :param content_path:

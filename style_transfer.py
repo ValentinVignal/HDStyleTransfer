@@ -32,7 +32,7 @@ if file_combination is not None:
     if not p_path.exists():
         src.st.var.param.save_current_txt(p_path)
 
-    src.st.train.style_transfert(
+    src.st.train.style_transfer(
         file_combination=file_combination,
         extractor=extractor,
         optimizers=optimizers,

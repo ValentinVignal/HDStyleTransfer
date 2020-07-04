@@ -1,1 +1,1 @@
-from . import style_transfert as st
+from . import style_transfer as st

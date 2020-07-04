@@ -42,14 +42,14 @@ or `content.zip` and `style.zip` files at the root of the project
 
 The parameters can be changed by creating and editing the files:
 
-- `style_transfert_options.json`
-- `style_transfert_parameters.json`
-- `style_transfert_parameters_list.json`
+- `style_transfer_options.json`
+- `style_transfer_parameters.json`
+- `style_transfer_parameters_list.json`
 
 
 It will create a `results` folder with the stylized images in it.
 
-To apply the style transfert on several images, run the command
+To apply the style transfer on several images, run the command
 
 ```cmd
 python style_transfer.py

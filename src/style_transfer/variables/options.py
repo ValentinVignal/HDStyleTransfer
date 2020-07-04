@@ -14,7 +14,7 @@ colab = 'google.colab' in sys.modules
 if not colab:
     pass
 
-options_json_path = EPath('style_transfert_options.json')
+options_json_path = EPath('style_transfer_options.json')
 
 if options_json_path.exists():
     with open(options_json_path, 'r') as json_file:

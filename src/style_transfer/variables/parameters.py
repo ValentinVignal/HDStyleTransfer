@@ -52,7 +52,7 @@ if not colab:
     p.epochs = 4
     p.steps_per_epoch = 5
 
-style_transfert_parameters_path = EPath('style_transfert_parameters.json')
+style_transfert_parameters_path = EPath('style_transfer_parameters.json')
 
 if style_transfert_parameters_path.exists():
     # Then update the default parameters
@@ -62,8 +62,8 @@ if style_transfert_parameters_path.exists():
             if value is not None:
                 p.update(key, value)
 
-style_transfert_parameters_list_path = EPath('style_transfert_parameters_list.json')
-style_transfert_parameters_grid_path = EPath('style_transfert_parameters_grid.json')
+style_transfert_parameters_list_path = EPath('style_transfer_parameters_list.json')
+style_transfert_parameters_grid_path = EPath('style_transfer_parameters_grid.json')
 
 if style_transfert_parameters_list_path.exists():
     p.list_mode()
