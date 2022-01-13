@@ -5,4 +5,4 @@ epic_path==0.1.1
 matplotlib==3.2.1
 tensorflow==2.2.0
 ipython==7.15.0
-Pillow==7.1.2
+Pillow==9.0.0
