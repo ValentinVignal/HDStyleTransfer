@@ -1,5 +1,5 @@
 tensorflow_hub==0.8.0
-numpy==1.18.4
+numpy==1.22.0
 load_bar==0.0.6
 epic_path==0.1.1
 matplotlib==3.2.1
